@@ -2,51 +2,38 @@ import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
+// List posts with comprehensive filtering and pagination
 export const list = query({
   args: {
     status: v.optional(v.union(v.literal("draft"), v.literal("published"), v.literal("private"))),
-    categoryId: v.optional(v.id("categories")),
     limit: v.optional(v.number()),
+    offset: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    let posts;
+    const limit = args.limit || 20;
+    const offset = args.offset || 0;
+
+    let postsQuery = ctx.db.query("posts");
     
     if (args.status) {
-      posts = await ctx.db
-        .query("posts")
-        .withIndex("by_status", (q) => q.eq("status", args.status!))
-        .order("desc")
-        .take(args.limit || 10);
-    } else if (args.categoryId) {
-      posts = await ctx.db
-        .query("posts")
-        .withIndex("by_category", (q) => q.eq("categoryId", args.categoryId))
-        .order("desc")
-        .take(args.limit || 10);
-    } else {
-      posts = await ctx.db
-        .query("posts")
-        .order("desc")
-        .take(args.limit || 10);
+      postsQuery = postsQuery.withIndex("by_status", (q) => q.eq("status", args.status!));
     }
 
-    return Promise.all(posts.map(async (post) => {
-      const author = await ctx.db.get(post.authorId);
-      const category = post.categoryId ? await ctx.db.get(post.categoryId) : null;
-      const featuredImageUrl = post.featuredImage 
-        ? await ctx.storage.getUrl(post.featuredImage) 
-        : null;
+    const posts = await postsQuery
+      .order("desc")
+      .take(limit + offset + 1);
 
-      return {
-        ...post,
-        author: author ? { name: author.name, email: author.email } : null,
-        category: category ? { name: category.name, slug: category.slug } : null,
-        featuredImageUrl,
-      };
-    }));
+    const paginatedPosts = posts.slice(offset, offset + limit);
+    const hasMore = posts.length > offset + limit;
+
+    return {
+      items: paginatedPosts,
+      hasMore,
+    };
   },
 });
 
+// Get post by slug
 export const getBySlug = query({
   args: { slug: v.string() },
   handler: async (ctx, args) => {
@@ -57,64 +44,55 @@ export const getBySlug = query({
 
     if (!post) return null;
 
-    const author = await ctx.db.get(post.authorId);
-    const category = post.categoryId ? await ctx.db.get(post.categoryId) : null;
-    const featuredImageUrl = post.featuredImage 
-      ? await ctx.storage.getUrl(post.featuredImage) 
-      : null;
-
-    return {
-      ...post,
-      author: author ? { name: author.name, email: author.email } : null,
-      category: category ? { name: category.name, slug: category.slug } : null,
-      featuredImageUrl,
-    };
+    return post;
   },
 });
 
+// Create new post
 export const create = mutation({
   args: {
     title: v.string(),
     slug: v.string(),
-    content: v.string(),
-    excerpt: v.optional(v.string()),
+    content: v.optional(v.string()),
     status: v.union(v.literal("draft"), v.literal("published"), v.literal("private")),
-    categoryId: v.optional(v.id("categories")),
-    tags: v.array(v.string()),
+    categories: v.array(v.id("categories")),
+    tags: v.array(v.id("tags")),
+    designVersion: v.optional(v.string()),
     metaTitle: v.optional(v.string()),
     metaDescription: v.optional(v.string()),
-    focusKeyword: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
 
-    const wordCount = args.content.split(/\s+/).length;
-    const readingTime = Math.ceil(wordCount / 200); // Average reading speed
+    // Calculate read time if content provided
+    const wordCount = args.content ? args.content.split(/\s+/).length : 0;
+    const readTime = Math.ceil(wordCount / 200); // Average reading speed
 
     return await ctx.db.insert("posts", {
       ...args,
-      authorId: userId,
+      authors: [userId],
+      relatedPosts: [],
       publishedAt: args.status === "published" ? Date.now() : undefined,
+      readTime,
       wordCount,
-      readingTime,
     });
   },
 });
 
+// Update existing post
 export const update = mutation({
   args: {
     id: v.id("posts"),
     title: v.optional(v.string()),
     slug: v.optional(v.string()),
     content: v.optional(v.string()),
-    excerpt: v.optional(v.string()),
     status: v.optional(v.union(v.literal("draft"), v.literal("published"), v.literal("private"))),
-    categoryId: v.optional(v.id("categories")),
-    tags: v.optional(v.array(v.string())),
+    categories: v.optional(v.array(v.id("categories"))),
+    tags: v.optional(v.array(v.id("tags"))),
+    designVersion: v.optional(v.string()),
     metaTitle: v.optional(v.string()),
     metaDescription: v.optional(v.string()),
-    focusKeyword: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -124,15 +102,14 @@ export const update = mutation({
     const post = await ctx.db.get(id);
     
     if (!post) throw new Error("Post not found");
-    if (post.authorId !== userId) throw new Error("Not authorized");
 
     // Update word count and reading time if content changed
     const updateData: any = { ...updates };
     if (updates.content) {
       const wordCount = updates.content.split(/\s+/).length;
-      const readingTime = Math.ceil(wordCount / 200);
+      const readTime = Math.ceil(wordCount / 200);
       updateData.wordCount = wordCount;
-      updateData.readingTime = readingTime;
+      updateData.readTime = readTime;
     }
 
     // Set published date if status changed to published
@@ -144,32 +121,35 @@ export const update = mutation({
   },
 });
 
+// Delete post
+export const remove = mutation({
+  args: { id: v.id("posts") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const post = await ctx.db.get(args.id);
+    if (!post) throw new Error("Post not found");
+
+    await ctx.db.delete(args.id);
+  },
+});
+
+// Search posts
 export const search = query({
   args: {
     query: v.string(),
-    categoryId: v.optional(v.id("categories")),
+    limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const results = await ctx.db
       .query("posts")
-      .withSearchIndex("search_posts", (q) => {
-        let search = q.search("content", args.query);
-        if (args.categoryId) {
-          search = search.eq("categoryId", args.categoryId);
-        }
-        return search.eq("status", "published");
-      })
-      .take(20);
+      .withSearchIndex("search_posts", (q) => 
+        q.search("content", args.query)
+         .eq("status", "published")
+      )
+      .take(args.limit || 20);
 
-    return Promise.all(results.map(async (post) => {
-      const author = await ctx.db.get(post.authorId);
-      const category = post.categoryId ? await ctx.db.get(post.categoryId) : null;
-      
-      return {
-        ...post,
-        author: author ? { name: author.name, email: author.email } : null,
-        category: category ? { name: category.name, slug: category.slug } : null,
-      };
-    }));
+    return results;
   },
 });
