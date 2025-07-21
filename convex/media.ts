@@ -187,7 +187,7 @@ export const processUpload = action({
     filesize: v.number(),
     alt: v.optional(v.string()),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<string> => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
 
@@ -201,7 +201,7 @@ export const processUpload = action({
     }
 
     // Create media record
-    const mediaId = await ctx.runMutation(api.media.create, {
+    const mediaId: any = await ctx.runMutation(api.media.create, {
       filename: args.filename,
       mimeType: args.mimeType,
       filesize: args.filesize,

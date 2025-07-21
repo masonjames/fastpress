@@ -10,17 +10,26 @@ export const list = query({
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    let pagesQuery = ctx.db.query("pages");
+    let pages;
     
     if (args.status) {
-      pagesQuery = ctx.db.query("pages").withIndex("by_status", (q) => q.eq("status", args.status!));
+      pages = await ctx.db
+        .query("pages")
+        .withIndex("by_status", (q) => q.eq("status", args.status!))
+        .order("desc")
+        .take(args.limit || 50);
     } else if (args.parent !== undefined) {
-      pagesQuery = ctx.db.query("pages").withIndex("by_parent", (q) => q.eq("parent", args.parent));
+      pages = await ctx.db
+        .query("pages")
+        .withIndex("by_parent", (q) => q.eq("parent", args.parent))
+        .order("desc")
+        .take(args.limit || 50);
+    } else {
+      pages = await ctx.db
+        .query("pages")
+        .order("desc")
+        .take(args.limit || 50);
     }
-
-    const pages = await pagesQuery
-      .order("desc")
-      .take(args.limit || 50);
 
     // Populate parent information
     return Promise.all(pages.map(async (page) => {

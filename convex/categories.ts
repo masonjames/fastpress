@@ -9,17 +9,18 @@ export const list = query({
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    let categoriesQuery = ctx.db.query("categories");
-    
     if (args.parent !== undefined) {
-      categoriesQuery = ctx.db.query("categories").withIndex("by_parent", (q) => q.eq("parent", args.parent));
+      return await ctx.db
+        .query("categories")
+        .withIndex("by_parent", (q) => q.eq("parent", args.parent))
+        .order("asc")
+        .take(args.limit || 50);
+    } else {
+      return await ctx.db
+        .query("categories")
+        .order("asc")
+        .take(args.limit || 50);
     }
-
-    const categories = await categoriesQuery
-      .order("asc")
-      .take(args.limit || 50);
-
-    return categories;
   },
 });
 

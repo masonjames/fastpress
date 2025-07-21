@@ -214,11 +214,7 @@ export const submitForm = action({
       });
     }
 
-    return {
-      success: true,
-      submissionId,
-      confirmationMessage: form.confirmationMessage || "Thank you for your submission!",
-    };
+    return submissionId;
   },
 });
 
