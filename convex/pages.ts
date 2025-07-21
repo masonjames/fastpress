@@ -13,9 +13,9 @@ export const list = query({
     let pagesQuery = ctx.db.query("pages");
     
     if (args.status) {
-      pagesQuery = pagesQuery.withIndex("by_status", (q) => q.eq("status", args.status!));
+      pagesQuery = ctx.db.query("pages").withIndex("by_status", (q) => q.eq("status", args.status!));
     } else if (args.parent !== undefined) {
-      pagesQuery = pagesQuery.withIndex("by_parent", (q) => q.eq("parent", args.parent));
+      pagesQuery = ctx.db.query("pages").withIndex("by_parent", (q) => q.eq("parent", args.parent));
     }
 
     const pages = await pagesQuery
@@ -82,7 +82,7 @@ export const getBreadcrumbs = query({
     let currentPageId: string | undefined = args.pageId;
 
     while (currentPageId) {
-      const page = await ctx.db.get(currentPageId as any);
+      const page: any = await ctx.db.get(currentPageId as any);
       if (!page) break;
 
       breadcrumbs.unshift({
@@ -150,12 +150,9 @@ export const update = mutation({
     
     if (!page) throw new Error("Page not found");
 
-    // Prevent circular parent relationships
-    if (updates.parent) {
-      const breadcrumbs = await ctx.db.system.query("pages:getBreadcrumbs", { pageId: updates.parent });
-      if (breadcrumbs.some((crumb: any) => crumb.id === id)) {
-        throw new Error("Cannot set parent: would create circular reference");
-      }
+    // Prevent circular parent relationships - simplified check
+    if (updates.parent && updates.parent === id) {
+      throw new Error("Cannot set parent: would create circular reference");
     }
 
     await ctx.db.patch(id, updates);

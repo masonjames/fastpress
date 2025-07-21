@@ -189,16 +189,16 @@ export const submitForm = action({
     ipAddress: v.optional(v.string()),
     userAgent: v.optional(v.string()),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<string> => {
     // Get form by slug
-    const form = await ctx.runQuery(api.forms.getBySlug, { slug: args.formSlug });
+    const form: any = await ctx.runQuery(api.forms.getBySlug, { slug: args.formSlug });
     
     if (!form || form.status !== "published") {
       throw new Error("Form not found or not published");
     }
 
     // Create form submission
-    const submissionId = await ctx.runMutation(api.forms.createSubmission, {
+    const submissionId: any = await ctx.runMutation(api.forms.createSubmission, {
       form: form._id,
       submissionData: args.data,
       submittedAt: Date.now(),

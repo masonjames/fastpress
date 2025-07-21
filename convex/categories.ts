@@ -12,7 +12,7 @@ export const list = query({
     let categoriesQuery = ctx.db.query("categories");
     
     if (args.parent !== undefined) {
-      categoriesQuery = categoriesQuery.withIndex("by_parent", (q) => q.eq("parent", args.parent));
+      categoriesQuery = ctx.db.query("categories").withIndex("by_parent", (q) => q.eq("parent", args.parent));
     }
 
     const categories = await categoriesQuery
@@ -47,10 +47,7 @@ export const getBySlug = query({
     const posts = await ctx.db
       .query("posts")
       .filter((q) => 
-        q.or(
-          q.eq(q.field("categoryId"), category._id), // Legacy field
-          q.field("categories") !== undefined ? q.field("categories").includes(category._id) : false
-        )
+        q.eq(q.field("categoryId"), category._id)
       )
       .take(10);
 
@@ -78,10 +75,7 @@ export const getPosts = query({
     const posts = await ctx.db
       .query("posts")
       .filter((q) => 
-        q.or(
-          q.eq(q.field("categoryId"), args.categoryId), // Legacy field
-          q.field("categories") !== undefined ? q.field("categories").includes(args.categoryId) : false
-        )
+        q.eq(q.field("categoryId"), args.categoryId)
       )
       .order("desc")
       .take(limit + offset + 1);

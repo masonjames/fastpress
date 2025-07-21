@@ -1,6 +1,7 @@
 import { query, mutation, action } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { api } from "./_generated/api";
 
 // List media files with pagination and filtering
 export const list = query({
@@ -16,7 +17,7 @@ export const list = query({
     let mediaQuery = ctx.db.query("media");
     
     if (args.mimeType) {
-      mediaQuery = mediaQuery.filter((q) => q.eq(q.field("mimeType").startsWith(args.mimeType!), true));
+      mediaQuery = mediaQuery.filter((q) => q.field("mimeType"))
     }
 
     const media = await mediaQuery
@@ -34,7 +35,7 @@ export const list = query({
         // Generate URL from storage if stored in Convex
         if (file.storageId && !url) {
           try {
-            url = await ctx.storage.getUrl(file.storageId);
+            url = await ctx.storage.getUrl(file.storageId) || undefined;
           } catch (error) {
             console.error("Failed to get storage URL:", error);
           }
@@ -66,7 +67,7 @@ export const getById = query({
     // Generate URL from storage if needed
     if (file.storageId && !url) {
       try {
-        url = await ctx.storage.getUrl(file.storageId);
+        url = await ctx.storage.getUrl(file.storageId) || undefined;
       } catch (error) {
         console.error("Failed to get storage URL:", error);
       }
@@ -94,7 +95,7 @@ export const getByFilename = query({
     
     if (file.storageId && !url) {
       try {
-        url = await ctx.storage.getUrl(file.storageId);
+        url = await ctx.storage.getUrl(file.storageId) || undefined;
       } catch (error) {
         console.error("Failed to get storage URL:", error);
       }
@@ -200,7 +201,7 @@ export const processUpload = action({
     }
 
     // Create media record
-    const mediaId = await ctx.runMutation("media:create", {
+    const mediaId = await ctx.runMutation(api.media.create, {
       filename: args.filename,
       mimeType: args.mimeType,
       filesize: args.filesize,

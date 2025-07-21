@@ -138,7 +138,7 @@ export const processSubmission = mutation({
     // Create submission record
     return await ctx.db.insert("submissions", {
       form: args.formId,
-      student: studentId,
+      student: studentId || undefined,
       data: args.submissionData,
       status: "pending",
       submittedAt: Date.now(),
