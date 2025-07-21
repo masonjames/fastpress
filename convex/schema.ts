@@ -8,14 +8,17 @@ const payBlocksTables = {
     title: v.string(),
     slug: v.string(),
     content: v.optional(v.string()), // Rich text content
+    excerpt: v.optional(v.string()), // Legacy field
     status: v.union(v.literal("draft"), v.literal("published"), v.literal("private")),
     publishedAt: v.optional(v.number()),
     
-    // Authors and relationships
-    authors: v.array(v.id("users")),
-    categories: v.array(v.id("categories")),
-    tags: v.array(v.id("tags")),
-    relatedPosts: v.array(v.id("posts")),
+    // Authors and relationships (compatible with old schema)
+    authors: v.optional(v.array(v.id("users"))),
+    authorId: v.optional(v.id("users")), // Legacy field for migration
+    categories: v.optional(v.array(v.id("categories"))),
+    tags: v.optional(v.array(v.union(v.string(), v.id("tags")))), // Legacy: strings or IDs
+    categoryId: v.optional(v.id("categories")), // Legacy field
+    relatedPosts: v.optional(v.array(v.id("posts"))),
     
     // Media and design
     bannerImage: v.optional(v.id("media")),
@@ -34,6 +37,7 @@ const payBlocksTables = {
     
     // Performance metrics
     readTime: v.optional(v.number()),
+    readingTime: v.optional(v.number()), // Legacy field
     wordCount: v.optional(v.number()),
     
     // WordPress migration fields

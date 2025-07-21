@@ -21,7 +21,6 @@ import type * as mcp from "../mcp.js";
 import type * as media from "../media.js";
 import type * as pages from "../pages.js";
 import type * as posts from "../posts.js";
-import type * as router from "../router.js";
 import type * as seo from "../seo.js";
 import type * as submissions from "../submissions.js";
 
@@ -42,7 +41,6 @@ declare const fullApi: ApiFromModules<{
   media: typeof media;
   pages: typeof pages;
   posts: typeof posts;
-  router: typeof router;
   seo: typeof seo;
   submissions: typeof submissions;
 }>;
