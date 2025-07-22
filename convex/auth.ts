@@ -46,6 +46,28 @@ export const loggedInUser = query({
 export const currentUserFull = query({
   args: {},
   handler: async (ctx): Promise<any> => {
-    return await ctx.runQuery(internal.users.getCurrentUserFull, {});
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return null;
+    
+    // Get auth user
+    const authUser = await ctx.db.get(userId);
+    if (!authUser) return null;
+    
+    // Get profile
+    const profile = await ctx.db
+      .query("profiles")
+      .withIndex("by_user", q => q.eq("userId", userId))
+      .first();
+    
+    if (!profile) return { ...authUser, role: null };
+    
+    // Get role
+    const role = profile.roleId ? await ctx.db.get(profile.roleId) : null;
+    
+    return {
+      ...authUser,
+      profile,
+      role: role?.name || null
+    };
   },
 });
