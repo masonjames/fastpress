@@ -17,9 +17,33 @@ export function AdminDashboard() {
   const user = useQuery(api.auth.loggedInUser);
   const posts = useQuery(api.posts.list, { limit: 50 });
   const pages = useQuery(api.pages.list, { limit: 50 });
+  const comments = useQuery(api.comments.listForAdmin, { limit: 10 });
+  const categories = useQuery(api.categories.list);
   
   const deletePost = useMutation(api.posts.remove);
   const deletePage = useMutation(api.pages.remove);
+
+  // Calculate dynamic SEO score
+  const calculateSEOScore = () => {
+    if (!posts) return 0;
+    
+    let score = 50; // Base score
+    const publishedPosts = posts.filter(p => p.status === 'published');
+    
+    // Points for published content
+    if (publishedPosts.length > 0) score += 10;
+    if (publishedPosts.length > 5) score += 10;
+    if (publishedPosts.length > 10) score += 10;
+    
+    // Points for SEO optimization
+    const postsWithSEO = publishedPosts.filter(p => p.metaTitle && p.metaDescription);
+    const seoOptimizedRatio = postsWithSEO.length / Math.max(publishedPosts.length, 1);
+    score += Math.round(seoOptimizedRatio * 20);
+    
+    return Math.min(score, 100);
+  };
+
+  const seoScore = calculateSEOScore();
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -51,6 +75,7 @@ export function AdminDashboard() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Posts</p>
                 <p className="text-2xl font-semibold text-gray-900">{posts?.length || 0}</p>
+                <p className="text-xs text-gray-500">{pages?.length || 0} pages</p>
               </div>
             </div>
           </div>
@@ -65,19 +90,23 @@ export function AdminDashboard() {
                 <p className="text-2xl font-semibold text-gray-900">
                   {posts?.filter(p => p.status === 'published').length || 0}
                 </p>
+                <p className="text-xs text-gray-500">
+                  {pages?.filter(p => p.status === 'published').length || 0} pages published
+                </p>
               </div>
             </div>
           </div>
           
           <div className="bg-white p-6 rounded-lg shadow-sm border">
             <div className="flex items-center">
-              <div className="p-2 bg-yellow-100 rounded-lg">
-                <span className="text-yellow-600 text-xl">📋</span>
+              <div className="p-2 bg-orange-100 rounded-lg">
+                <span className="text-orange-600 text-xl">💬</span>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Drafts</p>
-                <p className="text-2xl font-semibold text-gray-900">
-                  {posts?.filter(p => p.status === 'draft').length || 0}
+                <p className="text-sm font-medium text-gray-600">Comments</p>
+                <p className="text-2xl font-semibold text-gray-900">{comments?.length || 0}</p>
+                <p className="text-xs text-gray-500">
+                  {comments?.filter(c => c.status === 'pending').length || 0} pending
                 </p>
               </div>
             </div>
@@ -90,7 +119,15 @@ export function AdminDashboard() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">SEO Score</p>
-                <p className="text-2xl font-semibold text-gray-900">85/100</p>
+                <p className={`text-2xl font-semibold ${
+                  seoScore >= 80 ? 'text-green-600' : 
+                  seoScore >= 60 ? 'text-yellow-600' : 'text-red-600'
+                }`}>
+                  {seoScore}/100
+                </p>
+                <p className="text-xs text-gray-500">
+                  {posts?.filter(p => p.status === 'published' && p.metaTitle && p.metaDescription).length || 0} optimized
+                </p>
               </div>
             </div>
           </div>
@@ -217,16 +254,36 @@ interface PostsListProps {
 
 function PostsList({ posts, onEditPost, onDeletePost }: PostsListProps) {
   const [filter, setFilter] = useState<'all' | 'published' | 'draft' | 'private'>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 5;
   
   const filteredPosts = posts.filter(post => filter === 'all' || post.status === filter);
+  
+  // Pagination logic
+  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+  const startIndex = (currentPage - 1) * postsPerPage;
+  const paginatedPosts = filteredPosts.slice(startIndex, startIndex + postsPerPage);
+
+  // Reset to first page when filter changes
+  const handleFilterChange = (newFilter: typeof filter) => {
+    setFilter(newFilter);
+    setCurrentPage(1);
+  };
   
   return (
     <div className="bg-white rounded-lg shadow-sm border p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-900">Posts ({filteredPosts.length})</h3>
+        <h3 className="font-semibold text-gray-900">
+          Posts ({filteredPosts.length})
+          {totalPages > 1 && (
+            <span className="text-sm font-normal text-gray-500 ml-2">
+              Page {currentPage} of {totalPages}
+            </span>
+          )}
+        </h3>
         <select
           value={filter}
-          onChange={(e) => setFilter(e.target.value as any)}
+          onChange={(e) => handleFilterChange(e.target.value as any)}
           className="text-xs px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value="all">All Posts</option>
@@ -236,14 +293,14 @@ function PostsList({ posts, onEditPost, onDeletePost }: PostsListProps) {
         </select>
       </div>
       
-      <div className="space-y-3 max-h-96 overflow-y-auto">
-        {filteredPosts.length === 0 ? (
+      <div className="space-y-3">
+        {paginatedPosts.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             <p>No posts found</p>
             <p className="text-xs mt-1">Create your first post to get started!</p>
           </div>
         ) : (
-          filteredPosts.map((post) => (
+          paginatedPosts.map((post) => (
             <div key={post._id} className="border border-gray-200 rounded-lg p-3 hover:bg-gray-50">
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
@@ -307,6 +364,43 @@ function PostsList({ posts, onEditPost, onDeletePost }: PostsListProps) {
         )}
       </div>
       
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+          <button
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          
+          <div className="flex items-center gap-2">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-2 text-sm rounded-lg ${
+                  page === currentPage
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+          
+          <button
+            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
+        </div>
+      )}
+
       {/* Quick Actions */}
       <div className="mt-4 pt-4 border-t border-gray-200">
         <button
@@ -328,16 +422,36 @@ interface PagesListProps {
 
 function PagesList({ pages, onEditPage, onDeletePage }: PagesListProps) {
   const [filter, setFilter] = useState<'all' | 'published' | 'draft' | 'private'>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pagesPerPage = 5;
   
   const filteredPages = pages.filter(page => filter === 'all' || page.status === filter);
+  
+  // Pagination logic
+  const totalPages = Math.ceil(filteredPages.length / pagesPerPage);
+  const startIndex = (currentPage - 1) * pagesPerPage;
+  const paginatedPages = filteredPages.slice(startIndex, startIndex + pagesPerPage);
+
+  // Reset to first page when filter changes
+  const handleFilterChange = (newFilter: typeof filter) => {
+    setFilter(newFilter);
+    setCurrentPage(1);
+  };
   
   return (
     <div className="bg-white rounded-lg shadow-sm border p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-900">Pages ({filteredPages.length})</h3>
+        <h3 className="font-semibold text-gray-900">
+          Pages ({filteredPages.length})
+          {totalPages > 1 && (
+            <span className="text-sm font-normal text-gray-500 ml-2">
+              Page {currentPage} of {totalPages}
+            </span>
+          )}
+        </h3>
         <select
           value={filter}
-          onChange={(e) => setFilter(e.target.value as any)}
+          onChange={(e) => handleFilterChange(e.target.value as any)}
           className="text-xs px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value="all">All Pages</option>
@@ -347,14 +461,14 @@ function PagesList({ pages, onEditPage, onDeletePage }: PagesListProps) {
         </select>
       </div>
       
-      <div className="space-y-3 max-h-96 overflow-y-auto">
-        {filteredPages.length === 0 ? (
+      <div className="space-y-3">
+        {paginatedPages.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             <p>No pages found</p>
             <p className="text-xs mt-1">Create your first page to get started!</p>
           </div>
         ) : (
-          filteredPages.map((page) => (
+          paginatedPages.map((page) => (
             <div key={page._id} className="border border-gray-200 rounded-lg p-3 hover:bg-gray-50">
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
@@ -407,6 +521,43 @@ function PagesList({ pages, onEditPage, onDeletePage }: PagesListProps) {
         )}
       </div>
       
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+          <button
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          
+          <div className="flex items-center gap-2">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-2 text-sm rounded-lg ${
+                  page === currentPage
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+          
+          <button
+            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
+        </div>
+      )}
+
       {/* Quick Actions */}
       <div className="mt-4 pt-4 border-t border-gray-200">
         <button
