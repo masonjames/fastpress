@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useMutation, useQuery } from 'convex/react';
+import React, { useState, useRef } from 'react';
+import { useMutation, useQuery, useAction } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { Id } from '../../convex/_generated/dataModel';
 import { toast } from 'sonner';
@@ -9,6 +9,12 @@ const ProfileEditor: React.FC = () => {
   const updateProfile = useMutation(api.users.updateProfile);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showMediaPicker, setShowMediaPicker] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Media upload mutations
+  const generateUploadUrl = useMutation(api.media.generateUploadUrl);
+  const processUpload = useAction(api.media.processUpload);
   
   // Avatar image display
   const avatarMedia = useQuery(
@@ -75,19 +81,106 @@ const ProfileEditor: React.FC = () => {
     }
   };
 
-  const handleAvatarSelect = (mediaId: Id<'media'>) => {
-    setFormData(prev => ({
-      ...prev,
-      avatarId: mediaId
-    }));
-    setShowMediaPicker(false);
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0]; // Only take first file for avatar
+    setIsUploading(true);
+
+    try {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error(`"${file.name}" is not an image file`);
+        return;
+      }
+
+      // Validate file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error(`"${file.name}" is too large. Maximum size is 10MB.`);
+        return;
+      }
+
+      // Generate upload URL
+      const uploadUrl = await generateUploadUrl();
+
+      // Upload file
+      const result = await fetch(uploadUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+
+      if (!result.ok) {
+        throw new Error(`Failed to upload ${file.name}`);
+      }
+
+      const { storageId } = await result.json();
+
+      // Process the upload
+      const mediaId = await processUpload({
+        storageId,
+        filename: file.name,
+        mimeType: file.type,
+        filesize: file.size,
+      });
+
+      // Set as avatar in form data
+      setFormData(prev => ({
+        ...prev,
+        avatarId: mediaId
+      }));
+
+      // Immediately save to database
+      await updateProfile({ avatarId: mediaId });
+
+      toast.success(`"${file.name}" uploaded and set as avatar!`);
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Failed to upload avatar");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
   };
 
-  const removeAvatar = () => {
-    setFormData(prev => ({
-      ...prev,
-      avatarId: undefined
-    }));
+  const handleAvatarSelect = async (mediaId: Id<'media'>) => {
+    try {
+      // Set as avatar in form data
+      setFormData(prev => ({
+        ...prev,
+        avatarId: mediaId
+      }));
+
+      // Immediately save to database
+      await updateProfile({ avatarId: mediaId });
+      
+      setShowMediaPicker(false);
+      toast.success("Avatar updated successfully!");
+    } catch (error) {
+      console.error("Failed to update avatar:", error);
+      toast.error("Failed to update avatar");
+    }
+  };
+
+  const removeAvatar = async () => {
+    try {
+      // Remove avatar from form data
+      setFormData(prev => ({
+        ...prev,
+        avatarId: undefined
+      }));
+
+      // Immediately save to database
+      await updateProfile({ avatarId: undefined });
+      
+      toast.success("Avatar removed successfully!");
+    } catch (error) {
+      console.error("Failed to remove avatar:", error);
+      toast.error("Failed to remove avatar");
+    }
   };
 
   if (!currentUser) {
@@ -128,24 +221,41 @@ const ProfileEditor: React.FC = () => {
               )}
             </div>
             <div className="space-y-2">
-              <button
-                type="button"
-                onClick={() => setShowMediaPicker(true)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-              >
-                Choose Avatar
-              </button>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isUploading ? 'Uploading...' : 'Upload New'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowMediaPicker(true)}
+                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                >
+                  Choose Existing
+                </button>
+              </div>
               {formData.avatarId && (
                 <button
                   type="button"
                   onClick={removeAvatar}
-                  className="block px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                  className="block px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
                 >
                   Remove Avatar
                 </button>
               )}
             </div>
           </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
         </div>
 
         {/* Basic Information */}
@@ -312,14 +422,14 @@ const ProfileEditor: React.FC = () => {
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
                   <p className="mt-2 text-gray-600">Loading media...</p>
                 </div>
-              ) : mediaItems.length === 0 ? (
+              ) : (!mediaItems.items || mediaItems.items.length === 0) ? (
                 <div className="text-center py-8 text-gray-500">
                   <div className="text-4xl mb-4">🖼️</div>
                   <p>No images found. Upload images in the Media Library first.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 md:grid-cols-4 gap-4">
-                  {mediaItems
+                  {mediaItems.items
                     .filter(item => item.mimeType.startsWith('image/'))
                     .map((item) => (
                     <div
