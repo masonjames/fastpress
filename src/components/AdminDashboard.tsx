@@ -5,11 +5,41 @@ import { PostEditor } from "./PostEditor";
 import { SEOAnalyzer } from "./SEOAnalyzer";
 import { MCPManager } from "./MCPManager";
 import { useState } from "react";
+import { Id } from "../../convex/_generated/dataModel";
+import { toast } from "sonner";
 
 export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<'posts' | 'seo' | 'mcp'>('posts');
+  const [editingPost, setEditingPost] = useState<any>(null);
   const user = useQuery(api.auth.loggedInUser);
   const posts = useQuery(api.posts.list, { limit: 50 });
+  const deletePost = useMutation(api.posts.remove);
+
+  const handleEditPost = (post: any) => {
+    setEditingPost(post);
+  };
+
+  const handleDeletePost = async (postId: Id<"posts">) => {
+    if (!confirm("Are you sure you want to delete this post?")) {
+      return;
+    }
+    
+    try {
+      await deletePost({ id: postId });
+      toast.success("Post deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete post");
+      console.error(error);
+    }
+  };
+
+  const handlePostSaved = () => {
+    setEditingPost(null);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingPost(null);
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -59,10 +89,18 @@ export function AdminDashboard() {
         {activeTab === 'posts' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <PostEditor />
+              <PostEditor 
+                editingPost={editingPost}
+                onPostSaved={handlePostSaved}
+                onCancel={handleCancelEdit}
+              />
             </div>
             <div>
-              <PostsList posts={posts || []} />
+              <PostsList 
+                posts={posts || []} 
+                onEditPost={handleEditPost}
+                onDeletePost={handleDeletePost}
+              />
             </div>
           </div>
         )}
@@ -74,23 +112,31 @@ export function AdminDashboard() {
   );
 }
 
-function PostsList({ posts }: { posts: any[] }) {
+function PostsList({ 
+  posts, 
+  onEditPost, 
+  onDeletePost 
+}: { 
+  posts: any[]; 
+  onEditPost: (post: any) => void;
+  onDeletePost: (postId: Id<"posts">) => void;
+}) {
   return (
     <div className="bg-white rounded-lg shadow-sm border p-6">
       <h3 className="font-semibold text-gray-900 mb-4">Recent Posts</h3>
       <div className="space-y-3">
         {posts.slice(0, 10).map((post) => (
-          <div key={post._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div className="flex-1 min-w-0">
-              <h4 className="text-sm font-medium text-gray-900 truncate">
-                {post.title}
-              </h4>
-              <p className="text-xs text-gray-500">
-                {post.status} • {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'Draft'}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className={`px-2 py-1 text-xs rounded-full ${
+          <div key={post._id} className="p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-start justify-between mb-2">
+              <div className="flex-1 min-w-0">
+                <h4 className="text-sm font-medium text-gray-900 truncate">
+                  {post.title}
+                </h4>
+                <p className="text-xs text-gray-500">
+                  {post.status} • {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'Draft'}
+                </p>
+              </div>
+              <span className={`px-2 py-1 text-xs rounded-full flex-shrink-0 ${
                 post.status === 'published' 
                   ? 'bg-green-100 text-green-700'
                   : post.status === 'draft'
@@ -99,6 +145,21 @@ function PostsList({ posts }: { posts: any[] }) {
               }`}>
                 {post.status}
               </span>
+            </div>
+            <div className="flex items-center gap-2 mt-2">
+              <button
+                onClick={() => onEditPost(post)}
+                className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Edit
+              </button>
+              <span className="text-xs text-gray-300">•</span>
+              <button
+                onClick={() => onDeletePost(post._id)}
+                className="text-xs text-red-600 hover:text-red-800 font-medium"
+              >
+                Delete
+              </button>
             </div>
           </div>
         ))}
