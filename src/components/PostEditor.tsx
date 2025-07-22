@@ -52,8 +52,24 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
       setMetaTitle(editingPost.metaTitle || "");
       setMetaDescription(editingPost.metaDescription || "");
       setFocusKeyword(editingPost.focusKeyword || "");
+    } else {
+      // Reset form when not editing
+      resetForm();
     }
   }, [editingPost]);
+
+  const resetForm = () => {
+    setTitle("");
+    setSlug("");
+    setContent("");
+    setExcerpt("");
+    setStatus("draft");
+    setTags("");
+    setSelectedCategories([]);
+    setMetaTitle("");
+    setMetaDescription("");
+    setFocusKeyword("");
+  };
 
   const generateSlug = (title: string) => {
     return title
