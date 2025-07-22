@@ -448,7 +448,12 @@ interface MediaPickerModalProps {
 }
 
 function MediaPickerModal({ onSelect, onClose }: MediaPickerModalProps) {
-  const media = useQuery(api.media.list, { limit: 50, mimeType: "image/" });
+  const media = useQuery(api.media.list, { limit: 50 });
+  // Filter images on the client side to ensure reliability
+  const imageMedia = media ? {
+    ...media,
+    items: media.items?.filter(item => item.mimeType?.startsWith('image/')) || []
+  } : media;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -464,18 +469,18 @@ function MediaPickerModal({ onSelect, onClose }: MediaPickerModalProps) {
         </div>
         
         <div className="p-4 overflow-y-auto max-h-[60vh]">
-          {media === undefined ? (
+          {imageMedia === undefined ? (
             <div className="flex items-center justify-center h-32">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
-          ) : media?.items?.length === 0 ? (
+          ) : imageMedia?.items?.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               <div className="text-4xl mb-4">🖼️</div>
               <p>No images found. Upload images in the Media Library first.</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {media?.items?.map((item) => (
+              {imageMedia?.items?.map((item) => (
                 <div
                   key={item._id}
                   className="cursor-pointer border-2 border-gray-200 rounded-lg overflow-hidden hover:border-blue-500 transition-colors"
