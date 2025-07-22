@@ -10,11 +10,14 @@ import { toast } from "sonner";
 
 export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<'posts' | 'seo' | 'mcp'>('posts');
+  const [contentType, setContentType] = useState<'posts' | 'pages'>('posts');
   const [editingPost, setEditingPost] = useState<any>(null);
   const user = useQuery(api.auth.loggedInUser);
   const posts = useQuery(api.posts.list, { limit: 50 });
+  const pages = useQuery(api.pages.list, { limit: 50 });
   
   const deletePost = useMutation(api.posts.remove);
+  const deletePage = useMutation(api.pages.remove);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -117,28 +120,72 @@ export function AdminDashboard() {
 
         {/* Tab Content */}
         {activeTab === 'posts' && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <PostEditor 
-                editingPost={editingPost}
-                onPostSaved={() => setEditingPost(null)}
-                onCancel={() => setEditingPost(null)}
-              />
+          <div>
+            {/* Content Type Sub-Navigation */}
+            <div className="mb-6">
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => setContentType('posts')}
+                  className={`px-4 py-2 rounded-lg font-medium ${
+                    contentType === 'posts'
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  Posts ({posts?.length || 0})
+                </button>
+                <button
+                  onClick={() => setContentType('pages')}
+                  className={`px-4 py-2 rounded-lg font-medium ${
+                    contentType === 'pages'
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  Pages ({pages?.length || 0})
+                </button>
+              </div>
             </div>
-            <div>
-              <PostsList 
-                posts={posts || []} 
-                onEditPost={setEditingPost}
-                onDeletePost={async (postId) => {
-                  if (!confirm("Are you sure you want to delete this post?")) return;
-                  try {
-                    await deletePost({ id: postId });
-                    toast.success("Post deleted successfully");
-                  } catch (error) {
-                    toast.error("Failed to delete post");
-                  }
-                }}
-              />
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2">
+                <PostEditor 
+                  editingPost={editingPost}
+                  onPostSaved={() => setEditingPost(null)}
+                  onCancel={() => setEditingPost(null)}
+                />
+              </div>
+              <div>
+                {contentType === 'posts' ? (
+                  <PostsList 
+                    posts={posts || []} 
+                    onEditPost={setEditingPost}
+                    onDeletePost={async (postId) => {
+                      if (!confirm("Are you sure you want to delete this post?")) return;
+                      try {
+                        await deletePost({ id: postId });
+                        toast.success("Post deleted successfully");
+                      } catch (error) {
+                        toast.error("Failed to delete post");
+                      }
+                    }}
+                  />
+                ) : (
+                  <PagesList 
+                    pages={pages || []} 
+                    onEditPage={setEditingPost}
+                    onDeletePage={async (pageId) => {
+                      if (!confirm("Are you sure you want to delete this page?")) return;
+                      try {
+                        await deletePage({ id: pageId });
+                        toast.success("Page deleted successfully");
+                      } catch (error) {
+                        toast.error("Failed to delete page");
+                      }
+                    }}
+                  />
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -255,6 +302,106 @@ function PostsList({ posts, onEditPost, onDeletePost }: PostsListProps) {
           className="w-full px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm font-medium"
         >
           + Create New Post
+        </button>
+      </div>
+    </div>
+  );
+}
+
+interface PagesListProps {
+  pages: any[];
+  onEditPage: (page: any) => void;
+  onDeletePage: (pageId: Id<"pages">) => void;
+}
+
+function PagesList({ pages, onEditPage, onDeletePage }: PagesListProps) {
+  const [filter, setFilter] = useState<'all' | 'published' | 'draft' | 'private'>('all');
+  
+  const filteredPages = pages.filter(page => filter === 'all' || page.status === filter);
+  
+  return (
+    <div className="bg-white rounded-lg shadow-sm border p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-semibold text-gray-900">Pages ({filteredPages.length})</h3>
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value as any)}
+          className="text-xs px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        >
+          <option value="all">All Pages</option>
+          <option value="published">Published</option>
+          <option value="draft">Drafts</option>
+          <option value="private">Private</option>
+        </select>
+      </div>
+      
+      <div className="space-y-3 max-h-96 overflow-y-auto">
+        {filteredPages.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            <p>No pages found</p>
+            <p className="text-xs mt-1">Create your first page to get started!</p>
+          </div>
+        ) : (
+          filteredPages.map((page) => (
+            <div key={page._id} className="border border-gray-200 rounded-lg p-3 hover:bg-gray-50">
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-medium text-gray-900 truncate mb-1">
+                    {page.title}
+                  </h4>
+                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <span className={`px-2 py-1 rounded-full ${
+                      page.status === 'published' 
+                        ? 'bg-green-100 text-green-700'
+                        : page.status === 'draft'
+                        ? 'bg-yellow-100 text-yellow-700'
+                        : 'bg-gray-100 text-gray-700'
+                    }`}>
+                      {page.status}
+                    </span>
+                    <span>•</span>
+                    <span>/{page.slug}</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-1 ml-2">
+                  <button
+                    onClick={() => onEditPage(page)}
+                    className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded"
+                    title="Edit page"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    onClick={() => onDeletePage(page._id)}
+                    className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded"
+                    title="Delete page"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </div>
+              
+              {/* Quick stats */}
+              <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
+                <div className="flex items-center gap-3 text-xs text-gray-500">
+                  <span>📄 Page</span>
+                  {page.parent && <span>📂 Has Parent</span>}
+                  {page.childCount > 0 && <span>👥 {page.childCount} child{page.childCount !== 1 ? 'ren' : ''}</span>}
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+      
+      {/* Quick Actions */}
+      <div className="mt-4 pt-4 border-t border-gray-200">
+        <button
+          onClick={() => onEditPage(null)}
+          className="w-full px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm font-medium"
+        >
+          + Create New Page
         </button>
       </div>
     </div>
