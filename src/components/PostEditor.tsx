@@ -1,20 +1,74 @@
-import { useState } from "react";
-import { useMutation } from "convex/react";
+import { useState, useEffect } from "react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { toast } from "sonner";
+import { Id } from "../../convex/_generated/dataModel";
 
-export function PostEditor() {
+interface PostEditorProps {
+  editingPost?: {
+    _id: Id<"posts">;
+    title: string;
+    slug: string;
+    content?: string;
+    excerpt?: string;
+    status: "draft" | "published" | "private";
+    tags?: string[];
+    categories?: Id<"categories">[];
+    metaTitle?: string;
+    metaDescription?: string;
+    focusKeyword?: string;
+  };
+  onPostSaved?: () => void;
+  onCancel?: () => void;
+}
+
+export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorProps) {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [content, setContent] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [status, setStatus] = useState<"draft" | "published" | "private">("draft");
   const [tags, setTags] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<Id<"categories">[]>([]);
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
   const [focusKeyword, setFocusKeyword] = useState("");
 
   const createPost = useMutation(api.posts.create);
+  const updatePost = useMutation(api.posts.update);
+  const categories = useQuery(api.categories.list);
+
+  // Load editing post data
+  useEffect(() => {
+    if (editingPost) {
+      setTitle(editingPost.title);
+      setSlug(editingPost.slug);
+      setContent(editingPost.content || "");
+      setExcerpt(editingPost.excerpt || "");
+      setStatus(editingPost.status);
+      setTags(editingPost.tags?.join(", ") || "");
+      setSelectedCategories(editingPost.categories || []);
+      setMetaTitle(editingPost.metaTitle || "");
+      setMetaDescription(editingPost.metaDescription || "");
+      setFocusKeyword(editingPost.focusKeyword || "");
+    } else {
+      // Reset form when not editing
+      resetForm();
+    }
+  }, [editingPost]);
+
+  const resetForm = () => {
+    setTitle("");
+    setSlug("");
+    setContent("");
+    setExcerpt("");
+    setStatus("draft");
+    setTags("");
+    setSelectedCategories([]);
+    setMetaTitle("");
+    setMetaDescription("");
+    setFocusKeyword("");
+  };
 
   const generateSlug = (title: string) => {
     return title
@@ -39,39 +93,53 @@ export function PostEditor() {
     }
 
     try {
-      await createPost({
+      const postData = {
         title: title.trim(),
         slug: slug.trim() || generateSlug(title),
         content: content.trim(),
         excerpt: excerpt.trim() || undefined,
         status,
         tags: tags.split(',').map(tag => tag.trim()).filter(Boolean),
+        categories: selectedCategories,
         metaTitle: metaTitle.trim() || undefined,
         metaDescription: metaDescription.trim() || undefined,
         focusKeyword: focusKeyword.trim() || undefined,
-      });
+      };
 
-      toast.success("Post created successfully!");
-      
-      // Reset form
-      setTitle("");
-      setSlug("");
-      setContent("");
-      setExcerpt("");
-      setStatus("draft");
-      setTags("");
-      setMetaTitle("");
-      setMetaDescription("");
-      setFocusKeyword("");
+      if (editingPost) {
+        await updatePost({
+          id: editingPost._id,
+          ...postData,
+        });
+        toast.success("Post updated successfully!");
+        onPostSaved?.();
+      } else {
+        await createPost(postData);
+        toast.success("Post created successfully!");
+        resetForm();
+      }
     } catch (error) {
-      toast.error("Failed to create post");
+      toast.error(editingPost ? "Failed to update post" : "Failed to create post");
       console.error(error);
     }
   };
 
   return (
     <div className="bg-white rounded-lg shadow-sm border p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-6">Create New Post</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold text-gray-900">
+          {editingPost ? "Edit Post" : "Create New Post"}
+        </h2>
+        {editingPost && onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="text-gray-600 hover:text-gray-800"
+          >
+            Cancel
+          </button>
+        )}
+      </div>
       
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
@@ -200,6 +268,30 @@ export function PostEditor() {
                 Separate tags with commas
               </p>
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Categories
+              </label>
+              <select
+                multiple
+                value={selectedCategories}
+                onChange={(e) => {
+                  const values = Array.from(e.target.selectedOptions, option => option.value as Id<"categories">);
+                  setSelectedCategories(values);
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[100px]"
+              >
+                {categories?.map((category) => (
+                  <option key={category._id} value={category._id}>
+                    {category.parent ? `• ${category.name}` : category.name}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-gray-500 mt-1">
+                Hold Ctrl/Cmd to select multiple categories
+              </p>
+            </div>
           </div>
         </div>
 
@@ -220,12 +312,23 @@ export function PostEditor() {
             </select>
           </div>
 
-          <button
-            type="submit"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            Create Post
-          </button>
+          <div className="flex gap-3">
+            {editingPost && onCancel && (
+              <button
+                type="button"
+                onClick={onCancel}
+                className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              >
+                Cancel
+              </button>
+            )}
+            <button
+              type="submit"
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              {editingPost ? "Update Post" : "Create Post"}
+            </button>
+          </div>
         </div>
       </form>
     </div>

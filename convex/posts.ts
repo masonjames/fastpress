@@ -84,25 +84,114 @@ export const search = query({
   },
 });
 
+// Get post by ID for editing
+export const getById = query({
+  args: { id: v.id("posts") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.id);
+  },
+});
+
 // Create new post
 export const create = mutation({
   args: {
     title: v.string(),
     slug: v.string(),
     content: v.optional(v.string()),
+    excerpt: v.optional(v.string()),
     status: v.union(v.literal("draft"), v.literal("published"), v.literal("private")),
+    tags: v.optional(v.array(v.string())),
+    categories: v.optional(v.array(v.id("categories"))),
+    metaTitle: v.optional(v.string()),
+    metaDescription: v.optional(v.string()),
+    focusKeyword: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
 
     return await ctx.db.insert("posts", {
-      ...args,
+      title: args.title,
+      slug: args.slug,
+      content: args.content,
+      excerpt: args.excerpt,
+      status: args.status,
       authors: [userId],
-      categories: [],
-      tags: [],
+      categories: args.categories || [],
+      tags: args.tags || [],
       relatedPosts: [],
+      metaTitle: args.metaTitle,
+      metaDescription: args.metaDescription,
+      focusKeyword: args.focusKeyword,
       publishedAt: args.status === "published" ? Date.now() : undefined,
     });
+  },
+});
+
+// Update existing post
+export const update = mutation({
+  args: {
+    id: v.id("posts"),
+    title: v.string(),
+    slug: v.string(),
+    content: v.optional(v.string()),
+    excerpt: v.optional(v.string()),
+    status: v.union(v.literal("draft"), v.literal("published"), v.literal("private")),
+    tags: v.optional(v.array(v.string())),
+    categories: v.optional(v.array(v.id("categories"))),
+    metaTitle: v.optional(v.string()),
+    metaDescription: v.optional(v.string()),
+    focusKeyword: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const existing = await ctx.db.get(args.id);
+    if (!existing) throw new Error("Post not found");
+
+    // Check if user is author or has permission to edit
+    if (!existing.authors?.includes(userId)) {
+      throw new Error("Not authorized to edit this post");
+    }
+
+    const updates: any = {
+      title: args.title,
+      slug: args.slug,
+      content: args.content,
+      excerpt: args.excerpt,
+      status: args.status,
+      tags: args.tags || [],
+      categories: args.categories || [],
+      metaTitle: args.metaTitle,
+      metaDescription: args.metaDescription,
+      focusKeyword: args.focusKeyword,
+    };
+
+    // Update publishedAt if status changes to published
+    if (args.status === "published" && existing.status !== "published") {
+      updates.publishedAt = Date.now();
+    }
+
+    return await ctx.db.patch(args.id, updates);
+  },
+});
+
+// Delete post
+export const remove = mutation({
+  args: { id: v.id("posts") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const existing = await ctx.db.get(args.id);
+    if (!existing) throw new Error("Post not found");
+
+    // Check if user is author or has permission to delete
+    if (!existing.authors?.includes(userId)) {
+      throw new Error("Not authorized to delete this post");
+    }
+
+    return await ctx.db.delete(args.id);
   },
 });
