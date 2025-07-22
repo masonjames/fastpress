@@ -175,9 +175,9 @@ export const create = mutation({
     featuredImageId: v.optional(v.id("media")),
     commentsEnabled: v.optional(v.boolean()),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<any> => {
     // Require admin or editor role for post creation
-    const { userId } = await ctx.runQuery(internal.roles.requireRole, { 
+    const { userId }: { userId: any } = await ctx.runQuery(internal.roles.requireRole, { 
       roles: ["administrator", "editor"] 
     });
 

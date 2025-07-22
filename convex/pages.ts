@@ -122,13 +122,13 @@ export const create = mutation({
     metaDescription: v.optional(v.string()),
     metaImage: v.optional(v.id("media")),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<any> => {
     // Require admin or editor role for page creation
-    const { userId } = await ctx.runQuery(internal.roles.requireRole, { 
+    const { userId }: { userId: any } = await ctx.runQuery(internal.roles.requireRole, { 
       roles: ["administrator", "editor"] 
     });
 
-    const pageData = {
+    const pageData: any = {
       ...args,
       authors: [userId],
       layout: args.layout || [],

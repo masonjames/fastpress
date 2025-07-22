@@ -45,7 +45,7 @@ export const loggedInUser = query({
 // Get current user with full profile and role information
 export const currentUserFull = query({
   args: {},
-  handler: async (ctx) => {
+  handler: async (ctx): Promise<any> => {
     return await ctx.runQuery(internal.users.getCurrentUserFull, {});
   },
 });
