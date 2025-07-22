@@ -19,11 +19,17 @@ const DEFAULT_ROLES = [
       "manage_users",
       "manage_roles",
       "manage_settings",
+      "manage_seo",
+      "manage_mcp",
       "moderate_comments",
       "publish_posts",
       "edit_posts",
       "delete_posts",
-      "read_private_posts"
+      "read_private_posts",
+      "upload_files",
+      "delete_files",
+      "view_analytics",
+      "export_data"
     ]
   },
   {
@@ -36,11 +42,14 @@ const DEFAULT_ROLES = [
       "manage_categories", 
       "manage_comments",
       "manage_media",
+      "manage_seo",
       "moderate_comments",
       "publish_posts",
       "edit_posts",
       "delete_posts",
-      "read_private_posts"
+      "read_private_posts",
+      "upload_files",
+      "view_analytics"
     ]
   },
   {
