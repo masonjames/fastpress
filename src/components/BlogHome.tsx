@@ -4,7 +4,9 @@ import { PostCard } from "./PostCard";
 import { CategoryList } from "./CategoryList";
 import { SearchBox } from "./SearchBox";
 import { SEOHead } from "./SEOHead";
-import { useState } from "react";
+import { ErrorBoundary } from "./ErrorBoundary";
+import { LoadingState } from "./LoadingSpinner";
+import { useState, useMemo, useCallback } from "react";
 
 interface BlogHomeProps {
   navigate: (path: string) => void;
@@ -31,6 +33,15 @@ export function BlogHome({ navigate }: BlogHomeProps) {
   const categories = useQuery(api.categories.list);
 
   const displayPosts = searchQuery.length > 2 ? searchResults : posts;
+  
+  // Memoize navigation handlers to prevent unnecessary re-renders
+  const handlePostClick = useCallback((slug: string) => {
+    navigate(`/${slug}`);
+  }, [navigate]);
+  
+  const handleCategoryClick = useCallback((slug: string) => {
+    navigate(`/category/${slug}`);
+  }, [navigate]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -69,22 +80,36 @@ export function BlogHome({ navigate }: BlogHomeProps) {
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {displayPosts?.map((post) => (
-              <PostCard 
-                key={post._id} 
-                post={post} 
-                onClick={() => navigate(`/${post.slug}`)}
-              />
-            ))}
-          </div>
-
-          {displayPosts && displayPosts.length === 0 && !searchQuery && (
-            <div className="text-center py-12">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No posts yet</h3>
-              <p className="text-gray-600">Check back soon for new content!</p>
-            </div>
-          )}
+          <ErrorBoundary>
+            {!displayPosts ? (
+              <LoadingState message="Loading posts..." />
+            ) : displayPosts.length === 0 ? (
+              <div className="text-center py-12">
+                {searchQuery.length > 2 ? (
+                  <>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">No results found</h3>
+                    <p className="text-gray-600">Try a different search term or browse categories.</p>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">No posts yet</h3>
+                    <p className="text-gray-600">Check back soon for new content!</p>
+                  </>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {displayPosts.map((post) => (
+                  <ErrorBoundary key={post._id}>
+                    <PostCard 
+                      post={post} 
+                      onClick={() => handlePostClick(post.slug)}
+                    />
+                  </ErrorBoundary>
+                ))}
+              </div>
+            )}
+          </ErrorBoundary>
         </div>
 
         {/* Sidebar */}
@@ -97,7 +122,7 @@ export function BlogHome({ navigate }: BlogHomeProps) {
                 setSelectedCategory(categoryId === selectedCategory ? null : categoryId);
                 setSearchQuery("");
               }}
-              onCategoryClick={(slug) => navigate(`/category/${slug}`)}
+              onCategoryClick={handleCategoryClick}
             />
 
             {/* Quick Stats */}
