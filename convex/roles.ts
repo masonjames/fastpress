@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { internalMutation, internalQuery, query, mutation } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { internal } from "./_generated/api";
 
 // WordPress-style default roles with appropriate permissions
 const DEFAULT_ROLES = [
@@ -167,7 +168,7 @@ export const assignRole = mutation({
   },
   handler: async (ctx, { userId, roleSlug }) => {
     // Require admin access
-    await ctx.runQuery(requireRole, { roles: ["administrator"] });
+    await ctx.runQuery(internal.roles.requireRole, { roles: ["administrator"] });
 
     // Find the role
     const role = await ctx.db
