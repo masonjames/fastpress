@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { internal } from "./_generated/api";
 
 // List pages with hierarchy and filtering
 export const list = query({
@@ -122,8 +123,10 @@ export const create = mutation({
     metaImage: v.optional(v.id("media")),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    // Require admin or editor role for page creation
+    const { userId } = await ctx.runQuery(internal.roles.requireRole, { 
+      roles: ["administrator", "editor"] 
+    });
 
     const pageData = {
       ...args,
@@ -151,13 +154,20 @@ export const update = mutation({
     metaImage: v.optional(v.id("media")),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    // Require admin or editor role for page updates
+    const { userId, role } = await ctx.runQuery(internal.roles.requireRole, { 
+      roles: ["administrator", "editor"] 
+    });
 
     const { id, ...updates } = args;
     const page = await ctx.db.get(id);
     
     if (!page) throw new Error("Page not found");
+
+    // Admins can edit any page, editors can only edit their own pages
+    if (role.slug !== "administrator" && !page.authors?.includes(userId)) {
+      throw new Error("Not authorized to edit this page");
+    }
 
     // Prevent circular parent relationships - simplified check
     if (updates.parent && updates.parent === id) {
@@ -172,8 +182,18 @@ export const update = mutation({
 export const remove = mutation({
   args: { id: v.id("pages") },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    // Require admin or editor role for page deletion
+    const { userId, role } = await ctx.runQuery(internal.roles.requireRole, { 
+      roles: ["administrator", "editor"] 
+    });
+
+    const page = await ctx.db.get(args.id);
+    if (!page) throw new Error("Page not found");
+
+    // Admins can delete any page, editors can only delete their own pages
+    if (role.slug !== "administrator" && !page.authors?.includes(userId)) {
+      throw new Error("Not authorized to delete this page");
+    }
 
     // Check if page has children
     const children = await ctx.db

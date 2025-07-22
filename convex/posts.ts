@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { internal } from "./_generated/api";
 
 // List posts with filtering
 export const list = query({
@@ -175,8 +176,10 @@ export const create = mutation({
     commentsEnabled: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    // Require admin or editor role for post creation
+    const { userId } = await ctx.runQuery(internal.roles.requireRole, { 
+      roles: ["administrator", "editor"] 
+    });
 
     return await ctx.db.insert("posts", {
       title: args.title,
@@ -216,14 +219,16 @@ export const update = mutation({
     commentsEnabled: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    // Require admin or editor role for post updates
+    const { userId, role } = await ctx.runQuery(internal.roles.requireRole, { 
+      roles: ["administrator", "editor"] 
+    });
 
     const existing = await ctx.db.get(args.id);
     if (!existing) throw new Error("Post not found");
 
-    // Check if user is author or has permission to edit
-    if (!existing.authors?.includes(userId)) {
+    // Admins can edit any post, editors can only edit their own posts
+    if (role.slug !== "administrator" && !existing.authors?.includes(userId)) {
       throw new Error("Not authorized to edit this post");
     }
 
@@ -255,14 +260,16 @@ export const update = mutation({
 export const remove = mutation({
   args: { id: v.id("posts") },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    // Require admin or editor role for post deletion
+    const { userId, role } = await ctx.runQuery(internal.roles.requireRole, { 
+      roles: ["administrator", "editor"] 
+    });
 
     const existing = await ctx.db.get(args.id);
     if (!existing) throw new Error("Post not found");
 
-    // Check if user is author or has permission to delete
-    if (!existing.authors?.includes(userId)) {
+    // Admins can delete any post, editors can only delete their own posts
+    if (role.slug !== "administrator" && !existing.authors?.includes(userId)) {
       throw new Error("Not authorized to delete this post");
     }
 

@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { internal } from "./_generated/api";
 
 // Submit a new comment (public endpoint)
 export const create = mutation({
@@ -159,10 +160,10 @@ export const approve = mutation({
     commentId: v.id("comments"),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      throw new Error("Not authenticated");
-    }
+    // Require admin or editor role for comment moderation
+    await ctx.runQuery(internal.roles.requireRole, { 
+      roles: ["administrator", "editor"] 
+    });
 
     const comment = await ctx.db.get(args.commentId);
     if (!comment) {
@@ -181,10 +182,10 @@ export const markSpam = mutation({
     commentId: v.id("comments"),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      throw new Error("Not authenticated");
-    }
+    // Require admin or editor role for comment moderation
+    await ctx.runQuery(internal.roles.requireRole, { 
+      roles: ["administrator", "editor"] 
+    });
 
     const comment = await ctx.db.get(args.commentId);
     if (!comment) {
@@ -203,10 +204,10 @@ export const remove = mutation({
     commentId: v.id("comments"),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      throw new Error("Not authenticated");
-    }
+    // Require admin or editor role for comment deletion
+    await ctx.runQuery(internal.roles.requireRole, { 
+      roles: ["administrator", "editor"] 
+    });
 
     const comment = await ctx.db.get(args.commentId);
     if (!comment) {
