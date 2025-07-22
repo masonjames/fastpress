@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { api } from "./_generated/api";
 
 export const getSetting = query({
   args: { key: v.string() },
@@ -99,6 +100,47 @@ export const setCommentsEnabled = mutation({
         value: args.enabled.toString(),
         type: "boolean" as const
       });
+    }
+  },
+});
+
+export const getAllSettings = query({
+  args: {},
+  handler: async (ctx) => {
+    const settings = await ctx.db.query("siteSettings").collect();
+    const result: Record<string, any> = {};
+    
+    for (const setting of settings) {
+      switch (setting.type) {
+        case "boolean":
+          result[setting.key] = setting.value === "true";
+          break;
+        case "number":
+          result[setting.key] = parseFloat(setting.value);
+          break;
+        case "json":
+          try {
+            result[setting.key] = JSON.parse(setting.value);
+          } catch {
+            result[setting.key] = setting.value;
+          }
+          break;
+        default:
+          result[setting.key] = setting.value;
+      }
+    }
+    
+    return result;
+  },
+});
+
+export const saveMultipleSettings = mutation({
+  args: { 
+    settings: v.record(v.string(), v.any())
+  },
+  handler: async (ctx, { settings }) => {
+    for (const [key, value] of Object.entries(settings)) {
+      await ctx.runMutation(api.siteSettings.setSetting, { key, value });
     }
   },
 });
