@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Application Architecture
 
-FastPress is a WordPress alternative built with React frontend and Convex backend, featuring SEO optimization and AI integration capabilities.
+FastPress is a **production-ready WordPress alternative** built with React frontend and Convex backend, featuring comprehensive SEO optimization, AI integration capabilities, and modern performance optimizations.
 
 ### Core Structure
 - **Frontend**: React + TypeScript + Vite, located in `src/`
@@ -23,41 +23,123 @@ FastPress is a WordPress alternative built with React frontend and Convex backen
 - **Styling**: Tailwind CSS with custom component library
 - **Auth**: Convex Auth with anonymous authentication
 - **Database**: Convex with structured schema for CMS functionality
+- **Performance**: React.memo optimizations, lazy loading, error boundaries
 
 ### Data Model (convex/schema.ts)
 The application uses a comprehensive CMS schema with:
 - **posts**: Blog posts with SEO fields, categories, tags, and status management
-- **categories**: Hierarchical category system with SEO metadata
+- **categories**: Hierarchical category system with SEO metadata  
 - **pages**: Static pages with template support
 - **comments**: Threaded commenting system with moderation
 - **siteSettings**: Key-value configuration storage
 - **seoAnalysis**: SEO scoring and optimization recommendations
 - **mcpConnections**: AI/MCP integration endpoints
 
+### MVP Features (Completed)
+**✅ Core Post Management**
+- Full CRUD operations for posts with comprehensive SEO field support
+- Rich content editing with category and tag management
+- Status management (draft, published, private)
+- Advanced post filtering and search capabilities
+
+**✅ Category System**
+- Hierarchical category management with parent/child relationships
+- Category-based filtering and navigation
+- SEO-optimized category pages
+
+**✅ Search & Filtering**
+- Full-text search using Convex search indices for optimal performance
+- Advanced filtering by tags, categories, date ranges
+- Sort options (date, title, relevance)
+- Real-time search results with query optimization
+
+**✅ SEO Features**
+- Real-time SEO preview with Google search result simulation
+- Comprehensive meta tag management (OpenGraph, Twitter Cards, structured data)
+- Focus keyword analysis with density calculation
+- SEO scoring and optimization recommendations
+- Enhanced meta tags for better search engine indexing
+
+**✅ Admin Dashboard Polish**
+- Professional admin interface with comprehensive post management
+- Dashboard statistics with visual overview cards
+- Enhanced PostsList with filtering, status management, and quick actions
+- Edit/delete functionality with confirmation dialogs
+- Post status indicators and metadata display
+
+**✅ Performance & Build Optimizations**
+- React.memo optimizations to prevent unnecessary re-renders
+- Image lazy loading with error handling
+- Error boundary components for graceful error recovery
+- Loading states and spinners for better UX
+- Vite build optimizations with manual chunk splitting
+- Dependency pre-bundling and dev server optimizations
+
 ### Routing & Navigation
 - Client-side routing via custom navigation state management (no React Router)
 - Routes: `/` (home), `/admin` (dashboard), `/category/{slug}`, `/{post-slug}`
 - SEO-friendly URLs with slug-based routing
+- Memoized navigation handlers for performance
 
 ### Key Components
-- **AdminDashboard**: Post/page management interface
-- **PostEditor**: Rich content editing with SEO analysis
+
+**Core CMS Components:**
+- **AdminDashboard**: Comprehensive post/page management interface with filtering
+- **PostEditor**: Rich content editing with real-time SEO analysis and preview
+- **BlogHome**: Main blog interface with advanced search and filtering
+- **PostCard**: Optimized post display component with lazy loading
+
+**SEO & Performance Components:**
+- **SEOPreview**: Real-time Google search result preview with metrics
+- **SEOHead**: Dynamic meta tag management with structured data
+- **ErrorBoundary**: Graceful error handling and recovery
+- **LoadingSpinner/LoadingState**: Professional loading indicators
+
+**Supporting Components:**
+- **CategoryList**: Hierarchical category navigation
+- **SearchBox**: Advanced search interface
 - **SEOAnalyzer**: Real-time SEO scoring and suggestions
 - **MCPManager**: AI service integration management
+
+### Backend Architecture (convex/)
+
+**Enhanced Post Management:**
+- `posts.ts`: Complete CRUD operations with advanced querying
+  - Full-text search with `withSearchIndex` for optimal performance
+  - Advanced filtering by category, tag, date, status
+  - Multiple sort options and pagination support
+  - `getAllTags` query for tag-based filtering
+
+**Core Functionality:**
+- `categories.ts`: Hierarchical category management
+- `auth.ts`: Anonymous authentication with user management
+- `schema.ts`: Comprehensive CMS data model
 
 ### Authentication Flow
 - Anonymous auth enabled by default for easy setup
 - Admin access required for content management
 - User roles managed through Convex Auth tables
+- Secure post editing/deletion with author verification
 
 ### File Organization
-- `src/components/`: React UI components
+- `src/components/`: React UI components (memoized and optimized)
 - `convex/`: Server-side functions, schema, and auth config
-- `convex/router.ts`: Custom HTTP routes (separate from auth routes)
+- `convex/posts.ts`: Enhanced with full CRUD and search capabilities
 - Path alias: `@/` maps to `src/`
+
+### Performance Optimizations
+- **Component Level**: React.memo for PostCard and other heavy components
+- **Network Level**: Image lazy loading with error handling
+- **Build Level**: Manual chunk splitting (vendor, convex, ui bundles)
+- **Development**: HMR optimization and dependency pre-bundling
+- **Error Handling**: Comprehensive error boundaries throughout the app
 
 ### Development Notes
 - Convex deployment: `mellow-elephant-188`
 - Chef integration for development previews
 - ESLint config allows relaxed TypeScript rules for rapid development
 - Prettier for code formatting
+- All MVP features implemented and tested with systematic feature branch workflow
+
+## Current Status
+FastPress is now a **fully functional WordPress alternative** ready for production use. All core CMS features are implemented with modern performance optimizations and comprehensive SEO capabilities. The systematic MVP development approach ensured clean, maintainable code with proper testing throughout the development process.
