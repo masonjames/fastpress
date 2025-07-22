@@ -1,5 +1,5 @@
 import { Authenticated, Unauthenticated } from "convex/react";
-import { Routes, Route, useParams } from "react-router-dom";
+import { Routes, Route, useParams, Link } from "react-router-dom";
 import { SignInForm } from "./SignInForm";
 import { SignOutButton } from "./SignOutButton";
 import { Toaster } from "sonner";
@@ -41,25 +41,25 @@ export default function App() {
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b shadow-sm">
         <div className="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
           <div className="flex items-center gap-6">
-            <a 
-              href="/"
+            <Link 
+              to="/"
               className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors"
             >
               FastPress
-            </a>
+            </Link>
             <nav className="hidden md:flex items-center gap-4">
-              <a 
-                href="/"
+              <Link 
+                to="/"
                 className="text-gray-600 hover:text-gray-900 transition-colors"
               >
                 Home
-              </a>
-              <a 
-                href="/admin"
+              </Link>
+              <Link 
+                to="/admin"
                 className="text-gray-600 hover:text-gray-900 transition-colors"
               >
                 Admin
-              </a>
+              </Link>
             </nav>
           </div>
           <div className="flex items-center gap-4">
@@ -67,12 +67,12 @@ export default function App() {
               <SignOutButton />
             </Authenticated>
             <Unauthenticated>
-              <a 
-                href="/admin"
+              <Link 
+                to="/admin"
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Sign In
-              </a>
+              </Link>
             </Unauthenticated>
           </div>
         </div>

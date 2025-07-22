@@ -8,11 +8,7 @@ import { ErrorBoundary } from "./ErrorBoundary";
 import { LoadingState } from "./LoadingSpinner";
 import { useState, useMemo, useCallback } from "react";
 
-interface BlogHomeProps {
-  navigate: (path: string) => void;
-}
-
-export function BlogHome({ navigate }: BlogHomeProps) {
+export function BlogHome() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -40,14 +36,6 @@ export function BlogHome({ navigate }: BlogHomeProps) {
 
   const displayPosts = searchQuery.length > 2 ? searchResults : posts;
   
-  // Memoize navigation handlers to prevent unnecessary re-renders
-  const handlePostClick = useCallback((slug: string) => {
-    navigate(`/${slug}`);
-  }, [navigate]);
-  
-  const handleCategoryClick = useCallback((slug: string) => {
-    navigate(`/category/${slug}`);
-  }, [navigate]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
