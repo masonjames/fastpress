@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 interface PostCardProps {
   post: {
     _id: string;
@@ -14,7 +16,7 @@ interface PostCardProps {
   onClick: () => void;
 }
 
-export function PostCard({ post, onClick }: PostCardProps) {
+function PostCardComponent({ post, onClick }: PostCardProps) {
   const excerpt = post.excerpt || post.content.substring(0, 150) + '...';
   const publishDate = post.publishedAt 
     ? new Date(post.publishedAt).toLocaleDateString('en-US', {
@@ -34,7 +36,12 @@ export function PostCard({ post, onClick }: PostCardProps) {
           <img 
             src={post.featuredImageUrl} 
             alt={post.title}
+            loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={(e) => {
+              // Hide broken images
+              (e.target as HTMLImageElement).style.display = 'none';
+            }}
           />
         </div>
       )}
@@ -97,3 +104,6 @@ export function PostCard({ post, onClick }: PostCardProps) {
     </article>
   );
 }
+
+// Memoize to prevent unnecessary re-renders
+export const PostCard = memo(PostCardComponent);
