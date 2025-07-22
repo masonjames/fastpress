@@ -85,19 +85,6 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
     }
   };
 
-  const resetForm = () => {
-    setTitle("");
-    setSlug("");
-    setContent("");
-    setExcerpt("");
-    setStatus("draft");
-    setTags("");
-    setSelectedCategories([]);
-    setMetaTitle("");
-    setMetaDescription("");
-    setFocusKeyword("");
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
