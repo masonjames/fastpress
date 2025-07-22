@@ -15,6 +15,7 @@ import type {
 } from "convex/server";
 import type * as auth from "../auth.js";
 import type * as categories from "../categories.js";
+import type * as comments from "../comments.js";
 import type * as http from "../http.js";
 import type * as mcp from "../mcp.js";
 import type * as media from "../media.js";
@@ -33,6 +34,7 @@ import type * as seo from "../seo.js";
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   categories: typeof categories;
+  comments: typeof comments;
   http: typeof http;
   mcp: typeof mcp;
   media: typeof media;

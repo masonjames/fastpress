@@ -2,13 +2,15 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { SEOHead } from "./SEOHead";
 import { RelatedPosts } from "./RelatedPosts";
+import { CommentList } from "./CommentList";
+import { useNavigate } from "react-router-dom";
 
 interface PostViewProps {
   postSlug: string;
-  navigate: (path: string) => void;
 }
 
-export function PostView({ postSlug, navigate }: PostViewProps) {
+export function PostView({ postSlug }: PostViewProps) {
+  const navigate = useNavigate();
   const post = useQuery(api.posts.getBySlug, { slug: postSlug });
 
   if (post === undefined) {
@@ -158,8 +160,13 @@ export function PostView({ postSlug, navigate }: PostViewProps) {
         />
       </article>
 
+      {/* Comments Section */}
+      <div className="mt-12 border-t pt-12">
+        <CommentList postId={post._id} />
+      </div>
+
       {/* Related Posts */}
-      <div className="mt-12">
+      <div className="mt-12 border-t pt-12">
         <RelatedPosts 
           currentPostId={post._id}
           categoryId={post.categoryId}
