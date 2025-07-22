@@ -12,6 +12,7 @@ interface PostViewProps {
 export function PostView({ postSlug }: PostViewProps) {
   const navigate = useNavigate();
   const post = useQuery(api.posts.getBySlug, { slug: postSlug });
+  const commentsEnabledGlobally = useQuery(api.siteSettings.getCommentsEnabled, {});
 
   if (post === undefined) {
     return (
@@ -161,9 +162,11 @@ export function PostView({ postSlug }: PostViewProps) {
       </article>
 
       {/* Comments Section */}
-      <div className="mt-12 border-t pt-12">
-        <CommentList postId={post._id} />
-      </div>
+      {commentsEnabledGlobally && (post.commentsEnabled ?? true) && (
+        <div className="mt-12 border-t pt-12">
+          <CommentList postId={post._id} />
+        </div>
+      )}
 
       {/* Related Posts */}
       <div className="mt-12 border-t pt-12">

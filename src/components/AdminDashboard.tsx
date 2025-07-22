@@ -12,7 +12,7 @@ import { Id } from "../../convex/_generated/dataModel";
 import { toast } from "sonner";
 
 export function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<'posts' | 'comments' | 'seo' | 'media' | 'mcp'>('posts');
+  const [activeTab, setActiveTab] = useState<'posts' | 'comments' | 'seo' | 'media' | 'mcp' | 'settings'>('posts');
   const [contentType, setContentType] = useState<'posts' | 'pages'>('posts');
   const [editingPost, setEditingPost] = useState<any>(null);
   const user = useQuery(api.auth.loggedInUser);
@@ -143,6 +143,7 @@ export function AdminDashboard() {
               { id: 'seo', label: 'SEO Analysis', icon: '🔍' },
               { id: 'media', label: 'Media Library', icon: '🖼️' },
               { id: 'mcp', label: 'AI Integration', icon: '🤖' },
+              { id: 'settings', label: 'Settings', icon: '⚙️' },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -244,6 +245,7 @@ export function AdminDashboard() {
         {activeTab === 'seo' && <SEOAnalyzer />}
         {activeTab === 'media' && <MediaManager />}
         {activeTab === 'mcp' && <MCPManager />}
+        {activeTab === 'settings' && <SettingsPanel />}
       </Authenticated>
     </div>
   );
@@ -569,6 +571,82 @@ function PagesList({ pages, onEditPage, onDeletePage }: PagesListProps) {
         >
           + Create New Page
         </button>
+      </div>
+    </div>
+  );
+}
+
+function SettingsPanel() {
+  const commentsEnabledGlobally = useQuery(api.siteSettings.getCommentsEnabled, {});
+  const setCommentsEnabled = useMutation(api.siteSettings.setCommentsEnabled);
+
+  const handleToggleComments = async (enabled: boolean) => {
+    try {
+      await setCommentsEnabled({ enabled });
+      toast.success(`Comments ${enabled ? 'enabled' : 'disabled'} site-wide`);
+    } catch (error) {
+      toast.error('Failed to update comment settings');
+      console.error(error);
+    }
+  };
+
+  return (
+    <div className="max-w-4xl">
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">Site Settings</h2>
+        
+        <div className="space-y-6">
+          {/* Comments Settings Section */}
+          <div>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Comment Settings</h3>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    Enable Comments Site-Wide
+                  </label>
+                  <p className="text-xs text-gray-500 mt-1">
+                    When disabled, comments are hidden on all posts regardless of individual post settings
+                  </p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={commentsEnabledGlobally ?? true}
+                    onChange={(e) => handleToggleComments(e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+              </div>
+              
+              <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded">
+                <div className="flex items-start">
+                  <div className="text-blue-600 text-sm mr-2">ℹ️</div>
+                  <div>
+                    <p className="text-sm text-blue-800 font-medium">How Comment Controls Work:</p>
+                    <ul className="text-xs text-blue-700 mt-1 space-y-1">
+                      <li>• Site-wide setting takes precedence over individual post settings</li>
+                      <li>• When disabled here, comments are hidden on all posts</li>
+                      <li>• When enabled here, individual posts can still disable their own comments</li>
+                      <li>• New posts have comments enabled by default</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Future Settings Sections */}
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Additional Settings</h3>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-sm text-gray-600 italic">
+                Additional site settings will be added here in future updates.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
