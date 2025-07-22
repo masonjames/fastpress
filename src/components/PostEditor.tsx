@@ -29,7 +29,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
   const [content, setContent] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [status, setStatus] = useState<"draft" | "published" | "private">("draft");
-  const [tags, setTags] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<Id<"categories">[]>([]);
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
@@ -47,7 +47,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
       setContent(editingPost.content || "");
       setExcerpt(editingPost.excerpt || "");
       setStatus(editingPost.status);
-      setTags(editingPost.tags?.join(", ") || "");
+      setTags(editingPost.tags || []);
       setSelectedCategories(editingPost.categories || []);
       setMetaTitle(editingPost.metaTitle || "");
       setMetaDescription(editingPost.metaDescription || "");
@@ -64,7 +64,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
     setContent("");
     setExcerpt("");
     setStatus("draft");
-    setTags("");
+    setTags([]);
     setSelectedCategories([]);
     setMetaTitle("");
     setMetaDescription("");
@@ -100,7 +100,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
         content: content.trim(),
         excerpt: excerpt.trim() || undefined,
         status,
-        tags: tags.split(',').map(tag => tag.trim()).filter(Boolean),
+        tags,
         categories: selectedCategories,
         metaTitle: metaTitle.trim() || undefined,
         metaDescription: metaDescription.trim() || undefined,
@@ -258,39 +258,47 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Tags
               </label>
-              <input
-                type="text"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="tag1, tag2, tag3"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Separate tags with commas
-              </p>
+              <TagInput tags={tags} onChange={setTags} />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Categories
               </label>
-              <select
-                multiple
-                value={selectedCategories}
-                onChange={(e) => {
-                  const values = Array.from(e.target.selectedOptions, option => option.value as Id<"categories">);
-                  setSelectedCategories(values);
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[100px]"
-              >
-                {categories?.map((category) => (
-                  <option key={category._id} value={category._id}>
-                    {category.parent ? `• ${category.name}` : category.name}
-                  </option>
-                ))}
-              </select>
+              <div className="border border-gray-300 rounded-lg p-3 bg-gray-50 max-h-40 overflow-y-auto">
+                {categories && categories.length > 0 ? (
+                  <div className="space-y-2">
+                    {categories.map((category) => (
+                      <label key={category._id} className="flex items-center cursor-pointer hover:bg-gray-100 rounded p-2">
+                        <input
+                          type="checkbox"
+                          checked={selectedCategories.includes(category._id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedCategories([...selectedCategories, category._id]);
+                            } else {
+                              setSelectedCategories(selectedCategories.filter(id => id !== category._id));
+                            }
+                          }}
+                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <span className="ml-2 text-sm text-gray-700">
+                          {category.parent ? `• ${category.name}` : category.name}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">No categories available</p>
+                )}
+              </div>
               <p className="text-xs text-gray-500 mt-1">
-                Hold Ctrl/Cmd to select multiple categories
+                Select one or more categories for this post
+                {selectedCategories.length > 0 && (
+                  <span className="ml-2 font-medium">
+                    ({selectedCategories.length} selected)
+                  </span>
+                )}
               </p>
             </div>
           </div>
@@ -344,6 +352,72 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
           </div>
         </div>
       </form>
+    </div>
+  );
+}
+
+interface TagInputProps {
+  tags: string[];
+  onChange: (tags: string[]) => void;
+}
+
+function TagInput({ tags, onChange }: TagInputProps) {
+  const [inputValue, setInputValue] = useState("");
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const newTag = inputValue.trim().toLowerCase();
+      
+      if (newTag && !tags.includes(newTag)) {
+        onChange([...tags, newTag]);
+      }
+      setInputValue("");
+    } else if (e.key === "Backspace" && inputValue === "" && tags.length > 0) {
+      onChange(tags.slice(0, -1));
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    onChange(tags.filter(tag => tag !== tagToRemove));
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap gap-2 p-3 border border-gray-300 rounded-lg bg-gray-50 min-h-[2.5rem]">
+        {tags.map((tag) => (
+          <span
+            key={tag}
+            className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full"
+          >
+            <span>#{tag}</span>
+            <button
+              type="button"
+              onClick={() => removeTag(tag)}
+              className="hover:text-blue-600 focus:outline-none"
+              aria-label={`Remove tag ${tag}`}
+            >
+              ×
+            </button>
+          </span>
+        ))}
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={tags.length === 0 ? "Add tags..." : ""}
+          className="flex-1 min-w-[120px] bg-transparent border-none outline-none text-sm placeholder-gray-500"
+        />
+      </div>
+      <p className="text-xs text-gray-500">
+        Press Enter or comma to add tags. Click × to remove.
+        {tags.length > 0 && (
+          <span className="ml-2 font-medium">
+            ({tags.length} tag{tags.length !== 1 ? 's' : ''})
+          </span>
+        )}
+      </p>
     </div>
   );
 }
