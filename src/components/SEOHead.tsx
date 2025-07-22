@@ -71,10 +71,26 @@ export function SEOHead({
     
     updateMetaTag('robots', robotsContent.join(', '));
 
+    // Enhanced meta tags
+    updateMetaTag('theme-color', '#3B82F6', 'name');
+    updateMetaTag('og:site_name', 'FastPress', 'property');
+    updateMetaTag('author', postData?.authors?.[0]?.name || 'FastPress', 'name');
+
     // Article specific tags
     if (postData) {
       updateMetaTag('article:published_time', new Date(postData.publishedAt).toISOString(), 'property');
-      updateMetaTag('article:author', postData.author?.name || '', 'property');
+      updateMetaTag('article:author', postData.authors?.[0]?.name || 'FastPress', 'property');
+      
+      // Add category as article section
+      if (postData.categories && postData.categories.length > 0) {
+        updateMetaTag('article:section', postData.categories[0].name || 'General', 'property');
+      }
+
+      // Add reading time and word count for better indexing
+      if (postData.readTime) {
+        updateMetaTag('twitter:label1', 'Reading time', 'name');
+        updateMetaTag('twitter:data1', `${postData.readTime} min read`, 'name');
+      }
       
       if (postData.tags && postData.tags.length > 0) {
         // Remove existing article:tag meta tags

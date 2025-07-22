@@ -3,6 +3,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { toast } from "sonner";
 import { Id } from "../../convex/_generated/dataModel";
+import { SEOPreview } from "./SEOPreview";
 
 interface PostEditorProps {
   editingPost?: {
@@ -291,6 +292,18 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
             </div>
           </div>
         </div>
+
+        {/* SEO Preview */}
+        {title && content && (
+          <SEOPreview
+            title={title}
+            metaTitle={metaTitle}
+            metaDescription={metaDescription}
+            slug={slug || generateSlug(title)}
+            focusKeyword={focusKeyword}
+            content={content}
+          />
+        )}
 
         {/* Status and Submit */}
         <div className="flex items-center justify-between pt-6 border-t">
