@@ -17,7 +17,7 @@ export const list = query({
     let mediaQuery = ctx.db.query("media");
     
     if (args.mimeType) {
-      mediaQuery = mediaQuery.filter((q) => q.field("mimeType"))
+      mediaQuery = mediaQuery.filter((q) => q.eq(q.field("mimeType"), args.mimeType));
     }
 
     const media = await mediaQuery

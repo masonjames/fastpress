@@ -6,12 +6,13 @@ import { PageEditor } from "./PageEditor";
 import { CommentModeration } from "./CommentModeration";
 import { SEOAnalyzer } from "./SEOAnalyzer";
 import { MCPManager } from "./MCPManager";
+import { MediaManager } from "./MediaManager";
 import { useState } from "react";
 import { Id } from "../../convex/_generated/dataModel";
 import { toast } from "sonner";
 
 export function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<'posts' | 'comments' | 'seo' | 'mcp'>('posts');
+  const [activeTab, setActiveTab] = useState<'posts' | 'comments' | 'seo' | 'media' | 'mcp'>('posts');
   const [contentType, setContentType] = useState<'posts' | 'pages'>('posts');
   const [editingPost, setEditingPost] = useState<any>(null);
   const user = useQuery(api.auth.loggedInUser);
@@ -140,6 +141,7 @@ export function AdminDashboard() {
               { id: 'posts', label: 'Posts & Pages', icon: '📝' },
               { id: 'comments', label: 'Comments', icon: '💬' },
               { id: 'seo', label: 'SEO Analysis', icon: '🔍' },
+              { id: 'media', label: 'Media Library', icon: '🖼️' },
               { id: 'mcp', label: 'AI Integration', icon: '🤖' },
             ].map((tab) => (
               <button
@@ -240,6 +242,7 @@ export function AdminDashboard() {
 
         {activeTab === 'comments' && <CommentModeration />}
         {activeTab === 'seo' && <SEOAnalyzer />}
+        {activeTab === 'media' && <MediaManager />}
         {activeTab === 'mcp' && <MCPManager />}
       </Authenticated>
     </div>

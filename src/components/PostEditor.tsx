@@ -18,6 +18,7 @@ interface PostEditorProps {
     metaTitle?: string;
     metaDescription?: string;
     focusKeyword?: string;
+    featuredImageId?: Id<"media">;
   };
   onPostSaved?: () => void;
   onCancel?: () => void;
@@ -34,10 +35,13 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
   const [focusKeyword, setFocusKeyword] = useState("");
+  const [featuredImageId, setFeaturedImageId] = useState<Id<"media"> | null>(null);
+  const [showMediaPicker, setShowMediaPicker] = useState(false);
 
   const createPost = useMutation(api.posts.create);
   const updatePost = useMutation(api.posts.update);
   const categories = useQuery(api.categories.list);
+  const featuredImage = useQuery(api.media.getById, featuredImageId ? { id: featuredImageId } : "skip");
 
   // Load editing post data
   useEffect(() => {
@@ -52,6 +56,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
       setMetaTitle(editingPost.metaTitle || "");
       setMetaDescription(editingPost.metaDescription || "");
       setFocusKeyword(editingPost.focusKeyword || "");
+      setFeaturedImageId(editingPost.featuredImageId || null);
     } else {
       // Reset form when not editing
       resetForm();
@@ -69,6 +74,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
     setMetaTitle("");
     setMetaDescription("");
     setFocusKeyword("");
+    setFeaturedImageId(null);
   };
 
   const generateSlug = (title: string) => {
@@ -105,6 +111,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
         metaTitle: metaTitle.trim() || undefined,
         metaDescription: metaDescription.trim() || undefined,
         focusKeyword: focusKeyword.trim() || undefined,
+        featuredImageId: featuredImageId || undefined,
       };
 
       if (editingPost) {
@@ -199,6 +206,19 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Brief description of the post..."
+          />
+        </div>
+
+        {/* Featured Image */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Featured Image
+          </label>
+          <FeaturedImagePicker
+            featuredImageId={featuredImageId}
+            featuredImage={featuredImage}
+            onSelect={setFeaturedImageId}
+            onRemove={() => setFeaturedImageId(null)}
           />
         </div>
 
@@ -352,6 +372,133 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
           </div>
         </div>
       </form>
+    </div>
+  );
+}
+
+interface FeaturedImagePickerProps {
+  featuredImageId: Id<"media"> | null;
+  featuredImage: any;
+  onSelect: (id: Id<"media">) => void;
+  onRemove: () => void;
+}
+
+function FeaturedImagePicker({ featuredImageId, featuredImage, onSelect, onRemove }: FeaturedImagePickerProps) {
+  const [showPicker, setShowPicker] = useState(false);
+
+  return (
+    <div className="space-y-3">
+      {featuredImage && featuredImage.url ? (
+        <div className="relative">
+          <img
+            src={featuredImage.url}
+            alt={featuredImage.alt || "Featured image"}
+            className="w-full h-48 object-cover rounded-lg border"
+          />
+          <div className="absolute top-2 right-2 flex gap-2">
+            <button
+              type="button"
+              onClick={() => setShowPicker(true)}
+              className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              title="Change image"
+            >
+              ✏️
+            </button>
+            <button
+              type="button"
+              onClick={onRemove}
+              className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              title="Remove image"
+            >
+              🗑️
+            </button>
+          </div>
+          <div className="absolute bottom-2 left-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+            {featuredImage.filename}
+          </div>
+        </div>
+      ) : (
+        <div
+          className="w-full h-48 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-gray-400 hover:bg-gray-50"
+          onClick={() => setShowPicker(true)}
+        >
+          <div className="text-center">
+            <div className="text-4xl text-gray-400 mb-2">🖼️</div>
+            <p className="text-sm text-gray-600">Click to select a featured image</p>
+          </div>
+        </div>
+      )}
+
+      {showPicker && (
+        <MediaPickerModal
+          onSelect={(mediaId) => {
+            onSelect(mediaId);
+            setShowPicker(false);
+          }}
+          onClose={() => setShowPicker(false)}
+        />
+      )}
+    </div>
+  );
+}
+
+interface MediaPickerModalProps {
+  onSelect: (id: Id<"media">) => void;
+  onClose: () => void;
+}
+
+function MediaPickerModal({ onSelect, onClose }: MediaPickerModalProps) {
+  const media = useQuery(api.media.list, { limit: 50, mimeType: "image/" });
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[80vh] overflow-hidden">
+        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-gray-900">Select Featured Image</h3>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 text-xl"
+          >
+            ✕
+          </button>
+        </div>
+        
+        <div className="p-4 overflow-y-auto max-h-[60vh]">
+          {media === undefined ? (
+            <div className="flex items-center justify-center h-32">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          ) : media?.items?.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <div className="text-4xl mb-4">🖼️</div>
+              <p>No images found. Upload images in the Media Library first.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {media?.items?.map((item) => (
+                <div
+                  key={item._id}
+                  className="cursor-pointer border-2 border-gray-200 rounded-lg overflow-hidden hover:border-blue-500 transition-colors"
+                  onClick={() => onSelect(item._id)}
+                >
+                  <div className="aspect-square">
+                    <img
+                      src={item.url}
+                      alt={item.alt || item.filename}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="p-2">
+                    <p className="text-xs text-gray-600 truncate" title={item.filename}>
+                      {item.filename}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
