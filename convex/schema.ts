@@ -260,6 +260,36 @@ const payBlocksTables = {
     lastUsed: v.optional(v.number()),
   })
     .index("by_active", ["isActive"]),
+
+  // WordPress-style User Profiles
+  profiles: defineTable({
+    userId: v.id("users"),        // Auth user FK
+    user_login: v.string(),       // wp style username
+    user_nicename: v.string(),    // URL-friendly version
+    user_email: v.string(),       // Email address
+    user_url: v.optional(v.string()),     // Website URL
+    user_registered: v.number(),  // Registration timestamp (ms epoch)
+    display_name: v.string(),     // Display name
+    first_name: v.optional(v.string()),   // First name
+    last_name: v.optional(v.string()),    // Last name
+    bio: v.optional(v.string()),          // User biography
+    avatarId: v.optional(v.id("media")),  // Profile avatar
+    roleId: v.optional(v.id("roles")),    // User role
+  })
+    .index("by_user", ["userId"])
+    .index("by_login", ["user_login"])
+    .index("by_email", ["user_email"])
+    .index("by_role", ["roleId"]),
+
+  // WordPress-style User Meta (flexible key-value storage)
+  userMeta: defineTable({
+    userId: v.id("users"),        // Auth user FK
+    meta_key: v.string(),         // Meta key
+    meta_value: v.any(),          // Meta value (any type)
+  })
+    .index("by_user", ["userId"])
+    .index("by_key", ["meta_key"])
+    .index("by_user_key", ["userId", "meta_key"]),
 };
 
 export default defineSchema({
