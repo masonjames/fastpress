@@ -3,6 +3,7 @@ import { api } from "../../convex/_generated/api";
 import { SignInForm } from "../SignInForm";
 import { PostEditor } from "./PostEditor";
 import { PageEditor } from "./PageEditor";
+import { CommentModeration } from "./CommentModeration";
 import { SEOAnalyzer } from "./SEOAnalyzer";
 import { MCPManager } from "./MCPManager";
 import { useState } from "react";
@@ -10,7 +11,7 @@ import { Id } from "../../convex/_generated/dataModel";
 import { toast } from "sonner";
 
 export function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<'posts' | 'seo' | 'mcp'>('posts');
+  const [activeTab, setActiveTab] = useState<'posts' | 'comments' | 'seo' | 'mcp'>('posts');
   const [contentType, setContentType] = useState<'posts' | 'pages'>('posts');
   const [editingPost, setEditingPost] = useState<any>(null);
   const user = useQuery(api.auth.loggedInUser);
@@ -100,6 +101,7 @@ export function AdminDashboard() {
           <nav className="-mb-px flex space-x-8">
             {[
               { id: 'posts', label: 'Posts & Pages', icon: '📝' },
+              { id: 'comments', label: 'Comments', icon: '💬' },
               { id: 'seo', label: 'SEO Analysis', icon: '🔍' },
               { id: 'mcp', label: 'AI Integration', icon: '🤖' },
             ].map((tab) => (
@@ -199,6 +201,7 @@ export function AdminDashboard() {
           </div>
         )}
 
+        {activeTab === 'comments' && <CommentModeration />}
         {activeTab === 'seo' && <SEOAnalyzer />}
         {activeTab === 'mcp' && <MCPManager />}
       </Authenticated>
