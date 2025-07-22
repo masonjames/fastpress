@@ -57,7 +57,7 @@ export function BlogHome() {
           Welcome to <span className="text-blue-600">FastPress</span>
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-          Lightning-fast WordPress alternative with built-in SEO optimization, 
+          WordPress reimagined for 2026 – lightning-fast with built-in SEO optimization, 
           AI content generation, and modern web standards.
         </p>
         

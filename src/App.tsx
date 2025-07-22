@@ -9,6 +9,7 @@ import { CategoryView } from "./components/CategoryView";
 import { PageView } from "./components/PageView";
 import { AdminDashboard } from "./components/AdminDashboard";
 import { SEOHead } from "./components/SEOHead";
+import { AdminRouteGuard } from "./components/AdminRouteGuard";
 
 // Wrapper components for routes with parameters
 const CategoryWrapper = () => {
@@ -34,7 +35,9 @@ const AdminWrapper = () => (
       </div>
     </Unauthenticated>
     <Authenticated>
-      <AdminDashboard />
+      <AdminRouteGuard allowedRoles={["administrator", "editor"]}>
+        <AdminDashboard />
+      </AdminRouteGuard>
     </Authenticated>
   </>
 );
@@ -100,7 +103,7 @@ export default function App() {
             <div>
               <h3 className="text-lg font-semibold mb-4">FastPress</h3>
               <p className="text-gray-400">
-                A lightning-fast WordPress alternative with built-in SEO optimization and AI integration.
+                WordPress reimagined for 2026 – lightning-fast with built-in SEO optimization and AI integration.
               </p>
             </div>
             <div>
@@ -128,7 +131,7 @@ export default function App() {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 FastPress. Built with ❤️ and AI.</p>
+            <p>&copy; 2025 FastPress – WordPress reimagined for 2026. Built with ❤️ and AI.</p>
           </div>
         </div>
       </footer>

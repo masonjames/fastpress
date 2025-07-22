@@ -23,8 +23,8 @@ export function SEOHead({
   ogImage,
   postData 
 }: SEOHeadProps) {
-  const defaultTitle = "FastPress - Lightning Fast WordPress Alternative";
-  const defaultDescription = "A modern, SEO-optimized WordPress alternative built for speed and performance with AI integration.";
+  const defaultTitle = "FastPress – WordPress reimagined for 2026";
+  const defaultDescription = "WordPress reimagined for 2026 – lightning-fast with built-in SEO optimization and AI integration.";
   
   const finalTitle = title || defaultTitle;
   const finalDescription = description || defaultDescription;

@@ -8,7 +8,7 @@ import { SEOAnalyzer } from "./SEOAnalyzer";
 import { MCPManager } from "./MCPManager";
 import { MediaManager } from "./MediaManager";
 import ProfileEditor from "./ProfileEditor";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Id } from "../../convex/_generated/dataModel";
 import { toast } from "sonner";
 
@@ -17,6 +17,7 @@ export function AdminDashboard() {
   const [contentType, setContentType] = useState<'posts' | 'pages'>('posts');
   const [editingPost, setEditingPost] = useState<any>(null);
   const user = useQuery(api.auth.loggedInUser);
+  const currentUser = useQuery(api.auth.currentUserFull);
   const posts = useQuery(api.posts.list, { limit: 50 });
   const pages = useQuery(api.pages.list, { limit: 50 });
   const comments = useQuery(api.comments.listForAdmin, { limit: 10 });
@@ -46,6 +47,35 @@ export function AdminDashboard() {
   };
 
   const seoScore = calculateSEOScore();
+
+  // Handle role-based tab access
+  useEffect(() => {
+    if (currentUser?.role) {
+      const availableTabs = [
+        { id: 'posts', roles: ['administrator', 'editor'] },
+        { id: 'comments', roles: ['administrator', 'editor'] },
+        { id: 'seo', roles: ['administrator', 'editor'] },
+        { id: 'media', roles: ['administrator', 'editor'] },
+        { id: 'mcp', roles: ['administrator'] },
+        { id: 'profile', roles: ['administrator', 'editor'] },
+        { id: 'settings', roles: ['administrator'] },
+      ];
+
+      const currentTabAllowed = availableTabs.find(tab => 
+        tab.id === activeTab && tab.roles.includes(currentUser.role)
+      );
+
+      if (!currentTabAllowed) {
+        // Redirect to first available tab
+        const firstAvailable = availableTabs.find(tab => 
+          tab.roles.includes(currentUser.role)
+        );
+        if (firstAvailable) {
+          setActiveTab(firstAvailable.id as any);
+        }
+      }
+    }
+  }, [currentUser?.role, activeTab]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -139,14 +169,17 @@ export function AdminDashboard() {
         <div className="border-b border-gray-200 mb-8">
           <nav className="-mb-px flex space-x-8">
             {[
-              { id: 'posts', label: 'Posts & Pages', icon: '📝' },
-              { id: 'comments', label: 'Comments', icon: '💬' },
-              { id: 'seo', label: 'SEO Analysis', icon: '🔍' },
-              { id: 'media', label: 'Media Library', icon: '🖼️' },
-              { id: 'mcp', label: 'AI Integration', icon: '🤖' },
-              { id: 'profile', label: 'My Profile', icon: '👤' },
-              { id: 'settings', label: 'Settings', icon: '⚙️' },
-            ].map((tab) => (
+              { id: 'posts', label: 'Posts & Pages', icon: '📝', roles: ['administrator', 'editor'] },
+              { id: 'comments', label: 'Comments', icon: '💬', roles: ['administrator', 'editor'] },
+              { id: 'seo', label: 'SEO Analysis', icon: '🔍', roles: ['administrator', 'editor'] },
+              { id: 'media', label: 'Media Library', icon: '🖼️', roles: ['administrator', 'editor'] },
+              { id: 'mcp', label: 'AI Integration', icon: '🤖', roles: ['administrator'] },
+              { id: 'profile', label: 'My Profile', icon: '👤', roles: ['administrator', 'editor'] },
+              { id: 'settings', label: 'Settings', icon: '⚙️', roles: ['administrator'] },
+            ].filter((tab) => {
+              const userRole = currentUser?.role;
+              return userRole && tab.roles.includes(userRole);
+            }).map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}

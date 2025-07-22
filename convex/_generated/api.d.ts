@@ -21,8 +21,10 @@ import type * as mcp from "../mcp.js";
 import type * as media from "../media.js";
 import type * as pages from "../pages.js";
 import type * as posts from "../posts.js";
+import type * as roles from "../roles.js";
 import type * as seo from "../seo.js";
 import type * as siteSettings from "../siteSettings.js";
+import type * as users from "../users.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -41,8 +43,10 @@ declare const fullApi: ApiFromModules<{
   media: typeof media;
   pages: typeof pages;
   posts: typeof posts;
+  roles: typeof roles;
   seo: typeof seo;
   siteSettings: typeof siteSettings;
+  users: typeof users;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
