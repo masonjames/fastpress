@@ -243,15 +243,7 @@ export const deleteUser = mutation({
       await ctx.db.delete(profile._id);
     }
 
-    // Delete all user meta
-    const userMeta = await ctx.db
-      .query("userMeta")
-      .withIndex("by_user", q => q.eq("userId", userId))
-      .collect();
-
-    for (const meta of userMeta) {
-      await ctx.db.delete(meta._id);
-    }
+    // Note: userMeta table removed – no meta cleanup necessary
 
     // Note: We don't delete the auth user record as that's managed by Convex Auth
     
@@ -271,12 +263,12 @@ export const getUserMeta = query({
     const targetUserId = userId || await getAuthUserId(ctx);
     if (!targetUserId) return null;
 
-    const meta = await ctx.db
-      .query("userMeta")
-      .withIndex("by_user_key", q => q.eq("userId", targetUserId).eq("meta_key", meta_key))
+    const profile = await ctx.db
+      .query("profiles")
+      .withIndex("by_user", q => q.eq("userId", targetUserId))
       .first();
 
-    return meta?.meta_value || null;
+    return profile?.meta?.[meta_key] ?? null;
   },
 });
 
@@ -289,16 +281,12 @@ export const getUserMetaAll = query({
     const targetUserId = userId || await getAuthUserId(ctx);
     if (!targetUserId) return {};
 
-    const metaEntries = await ctx.db
-      .query("userMeta")
+    const profile = await ctx.db
+      .query("profiles")
       .withIndex("by_user", q => q.eq("userId", targetUserId))
-      .collect();
+      .first();
 
-    // Convert to key-value object
-    return metaEntries.reduce((acc, entry) => {
-      acc[entry.meta_key] = entry.meta_value;
-      return acc;
-    }, {} as Record<string, any>);
+    return profile?.meta ?? {};
   },
 });
 
@@ -322,23 +310,19 @@ export const setUserMeta = mutation({
       await ctx.runQuery(internal.roles.requireRole, { roles: ["administrator"] });
     }
 
-    // Check if meta already exists
-    const existing = await ctx.db
-      .query("userMeta")
-      .withIndex("by_user_key", q => q.eq("userId", targetUserId).eq("meta_key", meta_key))
+    const profile = await ctx.db
+      .query("profiles")
+      .withIndex("by_user", q => q.eq("userId", targetUserId))
       .first();
 
-    if (existing) {
-      // Update existing
-      await ctx.db.patch(existing._id, { meta_value });
-    } else {
-      // Create new
-      await ctx.db.insert("userMeta", {
-        userId: targetUserId,
-        meta_key,
-        meta_value,
-      });
+    if (!profile) {
+      throw new Error("Profile not found");
     }
+
+    const newMeta = { ...(profile.meta || {}) };
+    newMeta[meta_key] = meta_value;
+
+    await ctx.db.patch(profile._id, { meta: newMeta });
 
     return { success: true };
   },
@@ -363,14 +347,22 @@ export const deleteUserMeta = mutation({
       await ctx.runQuery(internal.roles.requireRole, { roles: ["administrator"] });
     }
 
-    const meta = await ctx.db
-      .query("userMeta")
-      .withIndex("by_user_key", q => q.eq("userId", targetUserId).eq("meta_key", meta_key))
+    const profile = await ctx.db
+      .query("profiles")
+      .withIndex("by_user", q => q.eq("userId", targetUserId))
       .first();
 
-    if (meta) {
-      await ctx.db.delete(meta._id);
+    if (!profile) {
+      throw new Error("Profile not found");
     }
+
+    if (!profile.meta || !(meta_key in profile.meta)) {
+      // Nothing to delete
+      return { success: true };
+    }
+
+    const { [meta_key]: _, ...remaining } = profile.meta;
+    await ctx.db.patch(profile._id, { meta: remaining });
 
     return { success: true };
   },

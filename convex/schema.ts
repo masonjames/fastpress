@@ -151,40 +151,6 @@ const payBlocksTables = {
   })
     .index("by_slug", ["slug"]),
 
-  siteSeoSettings: defineTable({
-    /* Overall site visibility: public, private (discourage indexing),
-       maintenance (coming-soon) */
-    siteVisibility: v.union(
-      v.literal("public"),
-      v.literal("private"),
-      v.literal("maintenance"),
-    ),
-
-    /* Defaults used when individual posts/pages don't override */
-    defaultMetaTitle: v.optional(v.string()),
-    defaultMetaDescription: v.optional(v.string()),
-
-    /* Social / Open Graph */
-    openGraphDefaultImage: v.optional(v.id("media")),
-    twitterCardType: v.optional(
-      v.union(v.literal("summary"), v.literal("summary_large_image")),
-    ),
-
-    /* Robots & crawlers */
-    robotsTxt: v.optional(v.string()),   // full robots.txt text
-    llmsTxt: v.optional(v.string()),     // LLMs.txt (large-language-model opts)
-
-    /* Sitemap & RSS */
-    sitemapEnabled: v.optional(v.boolean()),
-    sitemapLastGenerated: v.optional(v.number()),
-    rssFeedEnabled: v.optional(v.boolean()),
-    rssFeedItems: v.optional(v.number()),   // max items in feed
-
-    /* Misc structured data */
-    organizationName: v.optional(v.string()),
-    organizationLogo: v.optional(v.id("media")),
-  })
-    .index("by_visibility", ["siteVisibility"]),
 
   comments: defineTable({
     post: v.optional(v.id("posts")),
@@ -308,21 +274,13 @@ const payBlocksTables = {
     bio: v.optional(v.string()),          // User biography
     avatarId: v.optional(v.id("media")),  // Profile avatar
     roleId: v.optional(v.id("roles")),    // User role
+    meta: v.optional(v.record(v.string(), v.any())), // arbitrary user meta key/value store
   })
     .index("by_user", ["userId"])
     .index("by_login", ["user_login"])
     .index("by_email", ["user_email"])
     .index("by_role", ["roleId"]),
 
-  // WordPress-style User Meta (flexible key-value storage)
-  userMeta: defineTable({
-    userId: v.id("users"),        // Auth user FK
-    meta_key: v.string(),         // Meta key
-    meta_value: v.any(),          // Meta value (any type)
-  })
-    .index("by_user", ["userId"])
-    .index("by_key", ["meta_key"])
-    .index("by_user_key", ["userId", "meta_key"]),
 
   userSessions: defineTable({
     userId: v.id("users"),
