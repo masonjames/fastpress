@@ -2,6 +2,7 @@ import { Authenticated, Unauthenticated, useQuery, useMutation } from "convex/re
 import { api } from "../../convex/_generated/api";
 import { SignInForm } from "../SignInForm";
 import { PostEditor } from "./PostEditor";
+import { PageEditor } from "./PageEditor";
 import { SEOAnalyzer } from "./SEOAnalyzer";
 import { MCPManager } from "./MCPManager";
 import { useState } from "react";
@@ -149,11 +150,19 @@ export function AdminDashboard() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
-                <PostEditor 
-                  editingPost={editingPost}
-                  onPostSaved={() => setEditingPost(null)}
-                  onCancel={() => setEditingPost(null)}
-                />
+                {contentType === 'posts' ? (
+                  <PostEditor 
+                    editingPost={editingPost}
+                    onPostSaved={() => setEditingPost(null)}
+                    onCancel={() => setEditingPost(null)}
+                  />
+                ) : (
+                  <PageEditor 
+                    editingPage={editingPost}
+                    onPageSaved={() => setEditingPost(null)}
+                    onCancel={() => setEditingPost(null)}
+                  />
+                )}
               </div>
               <div>
                 {contentType === 'posts' ? (
