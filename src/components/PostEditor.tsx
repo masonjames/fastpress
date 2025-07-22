@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { toast } from "sonner";
 import { Id } from "../../convex/_generated/dataModel";
@@ -13,6 +13,7 @@ interface PostEditorProps {
     excerpt?: string;
     status: "draft" | "published" | "private";
     tags?: string[];
+    categories?: Id<"categories">[];
     metaTitle?: string;
     metaDescription?: string;
     focusKeyword?: string;
@@ -28,12 +29,14 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
   const [excerpt, setExcerpt] = useState("");
   const [status, setStatus] = useState<"draft" | "published" | "private">("draft");
   const [tags, setTags] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<Id<"categories">[]>([]);
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
   const [focusKeyword, setFocusKeyword] = useState("");
 
   const createPost = useMutation(api.posts.create);
   const updatePost = useMutation(api.posts.update);
+  const categories = useQuery(api.categories.list);
 
   // Load editing post data
   useEffect(() => {
@@ -44,6 +47,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
       setExcerpt(editingPost.excerpt || "");
       setStatus(editingPost.status);
       setTags(editingPost.tags?.join(", ") || "");
+      setSelectedCategories(editingPost.categories || []);
       setMetaTitle(editingPost.metaTitle || "");
       setMetaDescription(editingPost.metaDescription || "");
       setFocusKeyword(editingPost.focusKeyword || "");
@@ -71,6 +75,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
     setExcerpt("");
     setStatus("draft");
     setTags("");
+    setSelectedCategories([]);
     setMetaTitle("");
     setMetaDescription("");
     setFocusKeyword("");
@@ -92,6 +97,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
         excerpt: excerpt.trim() || undefined,
         status,
         tags: tags.split(',').map(tag => tag.trim()).filter(Boolean),
+        categories: selectedCategories,
         metaTitle: metaTitle.trim() || undefined,
         metaDescription: metaDescription.trim() || undefined,
         focusKeyword: focusKeyword.trim() || undefined,
@@ -257,6 +263,30 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
               />
               <p className="text-xs text-gray-500 mt-1">
                 Separate tags with commas
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Categories
+              </label>
+              <select
+                multiple
+                value={selectedCategories}
+                onChange={(e) => {
+                  const values = Array.from(e.target.selectedOptions, option => option.value as Id<"categories">);
+                  setSelectedCategories(values);
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[100px]"
+              >
+                {categories?.map((category) => (
+                  <option key={category._id} value={category._id}>
+                    {category.parent ? `• ${category.name}` : category.name}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-gray-500 mt-1">
+                Hold Ctrl/Cmd to select multiple categories
               </p>
             </div>
           </div>
