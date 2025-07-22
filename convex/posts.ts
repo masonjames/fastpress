@@ -171,6 +171,8 @@ export const create = mutation({
     metaTitle: v.optional(v.string()),
     metaDescription: v.optional(v.string()),
     focusKeyword: v.optional(v.string()),
+    featuredImageId: v.optional(v.id("media")),
+    commentsEnabled: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -189,6 +191,8 @@ export const create = mutation({
       metaTitle: args.metaTitle,
       metaDescription: args.metaDescription,
       focusKeyword: args.focusKeyword,
+      bannerImage: args.featuredImageId,
+      commentsEnabled: args.commentsEnabled,
       publishedAt: args.status === "published" ? Date.now() : undefined,
     });
   },
@@ -208,6 +212,8 @@ export const update = mutation({
     metaTitle: v.optional(v.string()),
     metaDescription: v.optional(v.string()),
     focusKeyword: v.optional(v.string()),
+    featuredImageId: v.optional(v.id("media")),
+    commentsEnabled: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -232,6 +238,8 @@ export const update = mutation({
       metaTitle: args.metaTitle,
       metaDescription: args.metaDescription,
       focusKeyword: args.focusKeyword,
+      bannerImage: args.featuredImageId,
+      commentsEnabled: args.commentsEnabled,
     };
 
     // Update publishedAt if status changes to published

@@ -19,6 +19,7 @@ interface PostEditorProps {
     metaDescription?: string;
     focusKeyword?: string;
     featuredImageId?: Id<"media">;
+    commentsEnabled?: boolean;
   };
   onPostSaved?: () => void;
   onCancel?: () => void;
@@ -37,6 +38,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
   const [focusKeyword, setFocusKeyword] = useState("");
   const [featuredImageId, setFeaturedImageId] = useState<Id<"media"> | null>(null);
   const [showMediaPicker, setShowMediaPicker] = useState(false);
+  const [commentsEnabled, setCommentsEnabled] = useState(true);
 
   const createPost = useMutation(api.posts.create);
   const updatePost = useMutation(api.posts.update);
@@ -57,6 +59,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
       setMetaDescription(editingPost.metaDescription || "");
       setFocusKeyword(editingPost.focusKeyword || "");
       setFeaturedImageId(editingPost.featuredImageId || null);
+      setCommentsEnabled(editingPost.commentsEnabled ?? true);
     } else {
       // Reset form when not editing
       resetForm();
@@ -75,6 +78,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
     setMetaDescription("");
     setFocusKeyword("");
     setFeaturedImageId(null);
+    setCommentsEnabled(true);
   };
 
   const generateSlug = (title: string) => {
@@ -112,6 +116,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
         metaDescription: metaDescription.trim() || undefined,
         focusKeyword: focusKeyword.trim() || undefined,
         featuredImageId: featuredImageId || undefined,
+        commentsEnabled,
       };
 
       if (editingPost) {
@@ -336,21 +341,40 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
           />
         )}
 
-        {/* Status and Submit */}
+        {/* Settings and Submit */}
         <div className="flex items-center justify-between pt-6 border-t">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Status
-            </label>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as any)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="draft">Draft</option>
-              <option value="published">Published</option>
-              <option value="private">Private</option>
-            </select>
+          <div className="flex items-center gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Status
+              </label>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value as any)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+                <option value="private">Private</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={commentsEnabled}
+                  onChange={(e) => setCommentsEnabled(e.target.checked)}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  Enable Comments
+                </span>
+              </label>
+              <p className="text-xs text-gray-500 mt-1">
+                Allow readers to comment on this post
+              </p>
+            </div>
           </div>
 
           <div className="flex gap-3">

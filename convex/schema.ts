@@ -40,6 +40,9 @@ const payBlocksTables = {
     readingTime: v.optional(v.number()), // Legacy field
     wordCount: v.optional(v.number()),
     
+    // Comment settings
+    commentsEnabled: v.optional(v.boolean()),
+    
     // WordPress migration fields
     wp_post_id: v.optional(v.number()),
     wp_post_name: v.optional(v.string()),

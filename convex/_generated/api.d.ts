@@ -22,6 +22,7 @@ import type * as media from "../media.js";
 import type * as pages from "../pages.js";
 import type * as posts from "../posts.js";
 import type * as seo from "../seo.js";
+import type * as siteSettings from "../siteSettings.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -41,6 +42,7 @@ declare const fullApi: ApiFromModules<{
   pages: typeof pages;
   posts: typeof posts;
   seo: typeof seo;
+  siteSettings: typeof siteSettings;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
