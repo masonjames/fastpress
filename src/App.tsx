@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import { BlogHome } from "./components/BlogHome";
 import { PostView } from "./components/PostView";
 import { CategoryView } from "./components/CategoryView";
+import { PageView } from "./components/PageView";
 import { AdminDashboard } from "./components/AdminDashboard";
 import { SEOHead } from "./components/SEOHead";
 
@@ -18,6 +19,11 @@ const CategoryWrapper = () => {
 const PostWrapper = () => {
   const { postSlug } = useParams<{ postSlug: string }>();
   return <PostView postSlug={postSlug!} />;
+};
+
+const PageWrapper = () => {
+  const { pageSlug } = useParams<{ pageSlug: string }>();
+  return <PageView pageSlug={pageSlug!} />;
 };
 
 const AdminWrapper = () => (
@@ -83,6 +89,7 @@ export default function App() {
           <Route path="/" element={<BlogHome />} />
           <Route path="/admin" element={<AdminWrapper />} />
           <Route path="/category/:categorySlug" element={<CategoryWrapper />} />
+          <Route path="/page/:pageSlug" element={<PageWrapper />} />
           <Route path="/:postSlug" element={<PostWrapper />} />
         </Routes>
       </main>

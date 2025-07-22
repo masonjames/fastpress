@@ -7,8 +7,10 @@ import { SEOHead } from "./SEOHead";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { LoadingState } from "./LoadingSpinner";
 import { useState, useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function BlogHome() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -35,6 +37,14 @@ export function BlogHome() {
   const tags = useQuery(api.posts.getAllTags);
 
   const displayPosts = searchQuery.length > 2 ? searchResults : posts;
+  
+  const handlePostClick = (slug: string) => {
+    navigate(`/${slug}`);
+  };
+
+  const handleCategoryClick = (categorySlug: string) => {
+    navigate(`/category/${categorySlug}`);
+  };
   
 
   return (
