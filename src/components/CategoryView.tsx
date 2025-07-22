@@ -11,7 +11,7 @@ interface CategoryViewProps {
 export function CategoryView({ categorySlug, navigate }: CategoryViewProps) {
   const category = useQuery(api.categories.getBySlug, { slug: categorySlug });
   const posts = useQuery(
-    api.categories.getPostsByCategory, 
+    api.categories.getPosts, 
     category ? { categoryId: category._id, limit: 20 } : "skip"
   );
 
