@@ -13,22 +13,28 @@ interface BlogHomeProps {
 export function BlogHome({ navigate }: BlogHomeProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<"date" | "title">("date");
   
   const posts = useQuery(api.posts.list, { 
     status: "published", 
     limit: 12,
-    categoryId: selectedCategory as any || undefined 
+    categoryId: selectedCategory as any || undefined,
+    tag: selectedTag || undefined,
+    sortBy: sortBy
   });
   
   const searchResults = useQuery(
     api.posts.search, 
     searchQuery.length > 2 ? { 
       query: searchQuery,
-      categoryId: selectedCategory as any || undefined 
+      categoryId: selectedCategory as any || undefined,
+      sortBy: sortBy === "date" ? "date" : sortBy === "title" ? "title" : "relevance"
     } : "skip"
   );
   
   const categories = useQuery(api.categories.list);
+  const tags = useQuery(api.posts.getAllTags);
 
   const displayPosts = searchQuery.length > 2 ? searchResults : posts;
 
@@ -58,16 +64,31 @@ export function BlogHome({ navigate }: BlogHomeProps) {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-3">
-          {searchQuery.length > 2 && (
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Search Results for "{searchQuery}"
-              </h2>
-              {searchResults && searchResults.length === 0 && (
-                <p className="text-gray-600">No articles found matching your search.</p>
-              )}
-            </div>
-          )}
+          {/* Results Header */}
+          <div className="mb-6">
+            {searchQuery.length > 2 ? (
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  Search Results for "{searchQuery}"
+                </h2>
+                <p className="text-gray-600">
+                  {searchResults?.length || 0} article{searchResults?.length !== 1 ? 's' : ''} found
+                  {selectedCategory && <span> in selected category</span>}
+                </p>
+              </div>
+            ) : (selectedCategory || selectedTag) ? (
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  Filtered Posts
+                </h2>
+                <p className="text-gray-600">
+                  {displayPosts?.length || 0} article{displayPosts?.length !== 1 ? 's' : ''} found
+                  {selectedTag && <span> with tag "{selectedTag}"</span>}
+                  {selectedCategory && <span> in selected category</span>}
+                </p>
+              </div>
+            ) : null}
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {displayPosts?.map((post) => (
@@ -96,9 +117,70 @@ export function BlogHome({ navigate }: BlogHomeProps) {
               onCategorySelect={(categoryId) => {
                 setSelectedCategory(categoryId === selectedCategory ? null : categoryId);
                 setSearchQuery("");
+                setSelectedTag(null); // Reset tag when category changes
               }}
               onCategoryClick={(slug) => navigate(`/category/${slug}`)}
             />
+
+            {/* Filters */}
+            <div className="bg-white rounded-lg shadow-sm border p-6">
+              <h3 className="font-semibold text-gray-900 mb-4">Filters & Sort</h3>
+              
+              <div className="space-y-4">
+                {/* Sort Options */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Sort By
+                  </label>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as "date" | "title")}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="date">Latest First</option>
+                    <option value="title">Alphabetical</option>
+                  </select>
+                </div>
+
+                {/* Tag Filter */}
+                {tags && tags.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Filter by Tag
+                    </label>
+                    <select
+                      value={selectedTag || ""}
+                      onChange={(e) => {
+                        setSelectedTag(e.target.value || null);
+                        setSearchQuery(""); // Reset search when tag changes
+                      }}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">All Tags</option>
+                      {tags.map((tag) => (
+                        <option key={tag} value={tag}>
+                          {tag}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Clear Filters */}
+                {(selectedCategory || selectedTag) && (
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(null);
+                      setSelectedTag(null);
+                      setSearchQuery("");
+                    }}
+                    className="w-full px-3 py-2 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    Clear All Filters
+                  </button>
+                )}
+              </div>
+            </div>
 
             {/* Quick Stats */}
             <div className="bg-white rounded-lg shadow-sm border p-6">
