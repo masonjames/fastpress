@@ -15,14 +15,12 @@ import type {
 } from "convex/server";
 import type * as auth from "../auth.js";
 import type * as categories from "../categories.js";
-import type * as forms from "../forms.js";
 import type * as http from "../http.js";
 import type * as mcp from "../mcp.js";
 import type * as media from "../media.js";
 import type * as pages from "../pages.js";
 import type * as posts from "../posts.js";
 import type * as seo from "../seo.js";
-import type * as submissions from "../submissions.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -35,14 +33,12 @@ import type * as submissions from "../submissions.js";
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   categories: typeof categories;
-  forms: typeof forms;
   http: typeof http;
   mcp: typeof mcp;
   media: typeof media;
   pages: typeof pages;
   posts: typeof posts;
   seo: typeof seo;
-  submissions: typeof submissions;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
