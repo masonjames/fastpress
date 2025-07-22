@@ -50,7 +50,7 @@ export function AdminDashboard() {
 
   // Handle role-based tab access
   useEffect(() => {
-    if (currentUser?.role) {
+    if (currentUser?.roleSlug) {
       const availableTabs = [
         { id: 'posts', roles: ['administrator', 'editor'] },
         { id: 'comments', roles: ['administrator', 'editor'] },
@@ -62,20 +62,20 @@ export function AdminDashboard() {
       ];
 
       const currentTabAllowed = availableTabs.find(tab => 
-        tab.id === activeTab && tab.roles.includes(currentUser.role)
+        tab.id === activeTab && tab.roles.includes(currentUser.roleSlug)
       );
 
       if (!currentTabAllowed) {
         // Redirect to first available tab
         const firstAvailable = availableTabs.find(tab => 
-          tab.roles.includes(currentUser.role)
+          tab.roles.includes(currentUser.roleSlug)
         );
         if (firstAvailable) {
           setActiveTab(firstAvailable.id as any);
         }
       }
     }
-  }, [currentUser?.role, activeTab]);
+  }, [currentUser?.roleSlug, activeTab]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -177,8 +177,8 @@ export function AdminDashboard() {
               { id: 'profile', label: 'My Profile', icon: '👤', roles: ['administrator', 'editor'] },
               { id: 'settings', label: 'Settings', icon: '⚙️', roles: ['administrator'] },
             ].filter((tab) => {
-              const userRole = currentUser?.role;
-              return userRole && tab.roles.includes(userRole);
+              const userRoleSlug = currentUser?.roleSlug;
+              return userRoleSlug && tab.roles.includes(userRoleSlug);
             }).map((tab) => (
               <button
                 key={tab.id}

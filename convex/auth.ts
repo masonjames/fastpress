@@ -67,7 +67,8 @@ export const currentUserFull = query({
     return {
       ...authUser,
       profile,
-      role: role?.name || null
+      role: role || null,
+      roleSlug: role?.slug || null
     };
   },
 });

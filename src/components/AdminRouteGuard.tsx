@@ -25,8 +25,8 @@ export const AdminRouteGuard = React.memo(({
     if (!currentUser) return;
 
     // Check if user has an allowed role
-    const userRole = currentUser.role;
-    if (userRole && !allowedRoles.includes(userRole)) {
+    const userRoleSlug = currentUser.roleSlug;
+    if (userRoleSlug && !allowedRoles.includes(userRoleSlug)) {
       // User has insufficient privileges
       toast.error(`Access denied. Admin access requires ${allowedRoles.join(" or ")} role.`);
       navigate("/", { replace: true });
@@ -34,7 +34,7 @@ export const AdminRouteGuard = React.memo(({
     }
 
     // If user doesn't have a role yet, default to subscriber access
-    if (!userRole) {
+    if (!userRoleSlug) {
       toast.error("Access denied. Admin access requires elevated privileges.");
       navigate("/", { replace: true });
       return;
@@ -57,8 +57,8 @@ export const AdminRouteGuard = React.memo(({
   }
 
   // If user doesn't have required role, don't render children
-  const userRole = currentUser.role;
-  if (!userRole || !allowedRoles.includes(userRole)) {
+  const userRoleSlug = currentUser.roleSlug;
+  if (!userRoleSlug || !allowedRoles.includes(userRoleSlug)) {
     return null; // Already navigated away
   }
 
