@@ -1,4 +1,5 @@
-import { internalMutation } from "./_generated/server";
+import { internalMutation, mutation } from "./_generated/server";
+import { api } from "./_generated/api";
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
 
@@ -17,6 +18,7 @@ import { Id } from "./_generated/dataModel";
  *   media:      Array<{ wp_id:number, filename:string, mimeType:string, filesize:number, url:string }>
  * }
  */
+// WordPress bulk import mutation for HTTP endpoint
 export const bulkImport = internalMutation({
   args: {
     data: v.object({
@@ -30,28 +32,24 @@ export const bulkImport = internalMutation({
     }),
   },
   handler: async (ctx, { data }) => {
-    // --- 1. Build mapping objects (legacy id -> Convex Id) ---
-    const userMap      = new Map<number, Id<"users">>();
-    const categoryMap  = new Map<number, Id<"categories">>();
-    const tagMap       = new Map<number, Id<"tags">>();
-    const postMap      = new Map<number, Id<"posts">>();
-    const pageMap      = new Map<number, Id<"pages">>();
-    const mediaMap     = new Map<number, Id<"media">>();
+    // Same bulk import logic as above but as internal mutation
+    const userMap = new Map<number, Id<"users">>();
+    const categoryMap = new Map<number, Id<"categories">>();
+    const tagMap = new Map<number, Id<"tags">>();
+    const postMap = new Map<number, Id<"posts">>();
+    const pageMap = new Map<number, Id<"pages">>();
+    const mediaMap = new Map<number, Id<"media">>();
 
-    // --- 2. Insert Users (Auth users are managed externally, so we just create profiles) ---
+    // Insert Users
     for (const u of data.users) {
-      const profileId = await ctx.db.insert("profiles", {
-        userId: ctx.db.generateId<"users">(), // placeholder auth user id
-        user_login: u.email.split("@")[0],
-        user_nicename: u.display_name || u.email.split("@")[0],
-        user_email: u.email,
-        user_registered: Date.now(),
-        display_name: u.display_name || u.email,
+      const userId = await ctx.db.insert("users", {
+        name: u.display_name || u.email.split("@")[0],
+        email: u.email,
       });
-      userMap.set(u.wp_id, profileId as unknown as Id<"users">);
+      userMap.set(u.wp_id, userId);
     }
 
-    // --- 3. Categories ---
+    // Insert Categories
     for (const c of data.categories) {
       const catId = await ctx.db.insert("categories", {
         name: c.name,
@@ -60,7 +58,7 @@ export const bulkImport = internalMutation({
       categoryMap.set(c.wp_id, catId);
     }
 
-    // --- 4. Tags ---
+    // Insert Tags
     for (const t of data.tags) {
       const tagId = await ctx.db.insert("tags", {
         name: t.name,
@@ -69,7 +67,7 @@ export const bulkImport = internalMutation({
       tagMap.set(t.wp_id, tagId);
     }
 
-    // --- 5. Media ---
+    // Insert Media
     for (const m of data.media) {
       const mediaId = await ctx.db.insert("media", {
         filename: m.filename,
@@ -80,53 +78,57 @@ export const bulkImport = internalMutation({
       mediaMap.set(m.wp_id, mediaId);
     }
 
-    // Helper to map category / tag arrays
-    const mapArray = <T>(ids: number[], map: Map<number, Id<T>>): Array<Id<T>> =>
-      ids.map((legacy) => map.get(legacy)).filter(Boolean) as Array<Id<T>>;
+    // Helper functions
+    const mapCategories = (ids: number[]): Array<Id<"categories">> =>
+      ids.map((legacy) => categoryMap.get(legacy)).filter(Boolean) as Array<Id<"categories">>;
+    
+    const mapUsers = (ids: number[]): Array<Id<"users">> =>
+      ids.map((legacy) => userMap.get(legacy)).filter(Boolean) as Array<Id<"users">>;
 
-    // --- 6. Posts ---
+    // Insert Posts
     for (const p of data.posts) {
       const postId = await ctx.db.insert("posts", {
         title: p.title,
         slug: p.slug,
         content: p.content,
         status: p.status === "publish" ? "published" : (p.status as any),
-        authors: p.author ? [userMap.get(p.author)!] : undefined,
-        categories: mapArray(p.categories || [], categoryMap),
-        tags: mapArray(p.tags || [], tagMap),
+        authors: p.author ? mapUsers([p.author]) : undefined,
+        categories: mapCategories(p.categories || []),
+        tags: p.tags || [],
         publishedAt: p.publishedAt,
         wp_post_id: p.wp_id,
       });
       postMap.set(p.wp_id, postId);
     }
 
-    // --- 7. Pages ---
+    // Insert Pages
     for (const pg of data.pages) {
       const pageId = await ctx.db.insert("pages", {
         title: pg.title,
         slug: pg.slug,
         content: pg.content,
         status: pg.status === "publish" ? "published" : (pg.status as any),
-        authors: pg.author ? [userMap.get(pg.author)!] : [],
-        publishedAt: pg.publishedAt,
-        wp_post_id: pg.wp_id,
+        authors: pg.author ? mapUsers([pg.author]) : [],
+        layout: [],
       });
       pageMap.set(pg.wp_id, pageId);
     }
 
-    // --- 8. Comments ---
+    // Insert Comments
+    const commentMap = new Map<number, Id<"comments">>();
     for (const cm of data.comments) {
       const convexPostId = postMap.get(cm.post) || pageMap.get(cm.post);
-      if (!convexPostId) continue; // skip orphan
-      await ctx.db.insert("comments", {
+      if (!convexPostId) continue;
+      const commentId = await ctx.db.insert("comments", {
         post: convexPostId as Id<"posts">,
-        parent: cm.parent ? (postMap.get(cm.parent) as Id<"comments">) : undefined,
+        parent: cm.parent ? commentMap.get(cm.parent) : undefined,
         author: cm.author,
         email: cm.email,
         content: cm.content,
         status: cm.status === "approved" ? "approved" : "pending",
         createdAt: cm.createdAt,
       });
+      commentMap.set(cm.wp_id, commentId);
     }
 
     return {
