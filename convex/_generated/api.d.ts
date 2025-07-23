@@ -25,6 +25,7 @@ import type * as roles from "../roles.js";
 import type * as seo from "../seo.js";
 import type * as siteSettings from "../siteSettings.js";
 import type * as users from "../users.js";
+import type * as wpMigration from "../wpMigration.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -47,6 +48,7 @@ declare const fullApi: ApiFromModules<{
   seo: typeof seo;
   siteSettings: typeof siteSettings;
   users: typeof users;
+  wpMigration: typeof wpMigration;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
