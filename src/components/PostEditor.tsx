@@ -6,6 +6,7 @@ import { Id } from "../../convex/_generated/dataModel";
 import { SEOPreview } from "./SEOPreview";
 import { TagInput } from "./editors/TagInput";
 import { FeaturedImagePicker } from "./editors/FeaturedImagePicker";
+import { BlockArrayField } from "./BlockArrayField";
 
 interface PostEditorProps {
   editingPost?: {
@@ -13,6 +14,7 @@ interface PostEditorProps {
     title: string;
     slug: string;
     content?: string;
+    layout?: any[];
     excerpt?: string;
     status: "draft" | "published" | "private";
     tags?: string[];
@@ -31,6 +33,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [content, setContent] = useState("");
+  const [layout, setLayout] = useState<any[]>([]);
   const [excerpt, setExcerpt] = useState("");
   const [status, setStatus] = useState<"draft" | "published" | "private">("draft");
   const [tags, setTags] = useState<string[]>([]);
@@ -53,6 +56,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
       setTitle(editingPost.title);
       setSlug(editingPost.slug);
       setContent(editingPost.content || "");
+      setLayout(editingPost.layout || []);
       setExcerpt(editingPost.excerpt || "");
       setStatus(editingPost.status);
       setTags(editingPost.tags || []);
@@ -72,6 +76,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
     setTitle("");
     setSlug("");
     setContent("");
+    setLayout([]);
     setExcerpt("");
     setStatus("draft");
     setTags([]);
@@ -100,8 +105,14 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!title.trim() || !content.trim()) {
-      toast.error("Title and content are required");
+    if (!title.trim()) {
+      toast.error("Title is required");
+      return;
+    }
+
+    // Require either content or layout blocks
+    if (!content.trim() && (!layout || layout.length === 0)) {
+      toast.error("Content or blocks are required");
       return;
     }
 
@@ -109,7 +120,8 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
       const postData = {
         title: title.trim(),
         slug: slug.trim() || generateSlug(title),
-        content: content.trim(),
+        content: content.trim() || undefined,
+        layout: layout.length > 0 ? layout : undefined,
         excerpt: excerpt.trim() || undefined,
         status,
         tags,
@@ -187,19 +199,35 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
           </div>
         </div>
 
-        {/* Content */}
+        {/* Content - Block Editor */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Content *
-          </label>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={12}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Write your post content here... (Supports basic Markdown)"
-            required
+          <BlockArrayField
+            label="Post Content"
+            value={layout}
+            onChange={setLayout}
           />
+          
+          {/* Legacy content fallback */}
+          <div className="mt-6 border-t pt-6">
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Legacy Content (Markdown)
+              </label>
+              <span className="text-xs text-gray-500">
+                Optional fallback for compatibility
+              </span>
+            </div>
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              rows={6}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Legacy content (used when no blocks are present)"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              This content will only be shown if no blocks are added above
+            </p>
+          </div>
         </div>
 
         {/* Excerpt */}
@@ -332,14 +360,14 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
         </div>
 
         {/* SEO Preview */}
-        {title && content && (
+        {title && (layout.length > 0 || content) && (
           <SEOPreview
             title={title}
             metaTitle={metaTitle}
             metaDescription={metaDescription}
             slug={slug || generateSlug(title)}
             focusKeyword={focusKeyword}
-            content={content}
+            content={content || (layout.length > 0 ? 'Block-based content' : '')}
           />
         )}
 

@@ -4,6 +4,7 @@ import { api } from "../../convex/_generated/api";
 import { toast } from "sonner";
 import { Id } from "../../convex/_generated/dataModel";
 import { SEOPreview } from "./SEOPreview";
+import { BlockArrayField } from "./BlockArrayField";
 
 interface PageEditorProps {
   editingPage?: {
@@ -11,6 +12,7 @@ interface PageEditorProps {
     title: string;
     slug: string;
     content?: string;
+    layout?: any[];
     status: "draft" | "published" | "private";
     parent?: Id<"pages">;
     metaTitle?: string;
@@ -24,6 +26,7 @@ export function PageEditor({ editingPage, onPageSaved, onCancel }: PageEditorPro
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [content, setContent] = useState("");
+  const [layout, setLayout] = useState<any[]>([]);
   const [status, setStatus] = useState<"draft" | "published" | "private">("draft");
   const [parent, setParent] = useState<Id<"pages"> | undefined>(undefined);
   const [metaTitle, setMetaTitle] = useState("");
@@ -39,6 +42,7 @@ export function PageEditor({ editingPage, onPageSaved, onCancel }: PageEditorPro
       setTitle(editingPage.title);
       setSlug(editingPage.slug);
       setContent(editingPage.content || "");
+      setLayout(editingPage.layout || []);
       setStatus(editingPage.status);
       setParent(editingPage.parent);
       setMetaTitle(editingPage.metaTitle || "");
@@ -53,6 +57,7 @@ export function PageEditor({ editingPage, onPageSaved, onCancel }: PageEditorPro
     setTitle("");
     setSlug("");
     setContent("");
+    setLayout([]);
     setStatus("draft");
     setParent(undefined);
     setMetaTitle("");
@@ -76,8 +81,14 @@ export function PageEditor({ editingPage, onPageSaved, onCancel }: PageEditorPro
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!title.trim() || !content.trim()) {
-      toast.error("Title and content are required");
+    if (!title.trim()) {
+      toast.error("Title is required");
+      return;
+    }
+
+    // Require either content or layout blocks
+    if (!content.trim() && (!layout || layout.length === 0)) {
+      toast.error("Content or blocks are required");
       return;
     }
 
@@ -85,7 +96,8 @@ export function PageEditor({ editingPage, onPageSaved, onCancel }: PageEditorPro
       const pageData = {
         title: title.trim(),
         slug: slug.trim() || generateSlug(title),
-        content: content.trim(),
+        content: content.trim() || undefined,
+        layout: layout.length > 0 ? layout : undefined,
         status,
         parent: parent || undefined,
         metaTitle: metaTitle.trim() || undefined,
@@ -183,19 +195,35 @@ export function PageEditor({ editingPage, onPageSaved, onCancel }: PageEditorPro
           </p>
         </div>
 
-        {/* Content */}
+        {/* Content - Block Editor */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Content *
-          </label>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={12}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Write your page content here... (Supports basic Markdown)"
-            required
+          <BlockArrayField
+            label="Page Content"
+            value={layout}
+            onChange={setLayout}
           />
+          
+          {/* Legacy content fallback */}
+          <div className="mt-6 border-t pt-6">
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Legacy Content (Markdown)
+              </label>
+              <span className="text-xs text-gray-500">
+                Optional fallback for compatibility
+              </span>
+            </div>
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              rows={6}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Legacy content (used when no blocks are present)"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              This content will only be shown if no blocks are added above
+            </p>
+          </div>
         </div>
 
         {/* SEO Section */}
@@ -240,13 +268,13 @@ export function PageEditor({ editingPage, onPageSaved, onCancel }: PageEditorPro
         </div>
 
         {/* SEO Preview */}
-        {title && content && (
+        {title && (layout.length > 0 || content) && (
           <SEOPreview
             title={title}
             metaTitle={metaTitle}
             metaDescription={metaDescription}
             slug={slug || generateSlug(title)}
-            content={content}
+            content={content || (layout.length > 0 ? 'Block-based content' : '')}
           />
         )}
 
