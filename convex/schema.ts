@@ -23,6 +23,7 @@ const payBlocksTables = {
     // Media and design
     bannerImage: v.optional(v.id("media")),
     designVersion: v.optional(v.string()),
+    layout: v.optional(v.array(v.any())), // Block layout for posts
     
     // SEO fields
     metaTitle: v.optional(v.string()),

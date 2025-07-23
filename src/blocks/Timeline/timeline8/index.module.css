@@ -1,0 +1,24 @@
+.richtextList ul,
+.richtextList ol {
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.richtextList li {
+  position: relative;
+  list-style: none;
+  margin-bottom: 0.5rem;
+  padding-left: 1.5em; /* Space for the dot */
+}
+
+.richtextList li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.7em; /* Adjust for vertical alignment */
+  width: 0.5em;
+  height: 0.5em;
+  background: var(--foreground, #000);
+  border-radius: 9999px;
+  display: block;
+}
