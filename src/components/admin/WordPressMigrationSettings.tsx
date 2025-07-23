@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { api } from "../../../convex/_generated/api";
 
 // Simple tailwind card style wrapper
 export default function WordPressMigrationSettings() {
@@ -37,10 +37,9 @@ export default function WordPressMigrationSettings() {
       setIsUploading(true);
       try {
         const text = await file.text();
-        const json = JSON.parse(text);
         const isXml = file.name.toLowerCase().endsWith(".xml");
         const endpoint = isXml ? "/migrate/wp/xml" : "/migrate/wp";
-        const body = isXml ? JSON.stringify({ xml: text }) : JSON.stringify({ data: json });
+        const body = isXml ? JSON.stringify({ xml: text }) : JSON.stringify({ data: JSON.parse(text) });
         const res = await fetch(endpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },

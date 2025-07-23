@@ -39,7 +39,7 @@ http.route({
           status: 400,
         });
       }
-      const result = await ctx.runAction(internal.wpMigration.xmlImport, {
+      const result = await ctx.runAction(internal.wpMigrationXml.xmlImport, {
         xml: payload.xml,
       });
       return new Response(JSON.stringify(result), {

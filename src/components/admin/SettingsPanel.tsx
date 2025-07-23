@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { toast } from "sonner";
+import WordPressMigrationSettings from "./WordPressMigrationSettings";
 
 export function SettingsPanel() {
-  const [activeSection, setActiveSection] = useState<'general' | 'seo'>('general');
+  const [activeSection, setActiveSection] = useState<'general' | 'seo' | 'migration'>('general');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const allSettings = useQuery(api.siteSettings.getAllSettings, {});
@@ -100,6 +101,7 @@ export function SettingsPanel() {
           {[
             { id: 'general', label: 'General Settings', icon: '⚙️' },
             { id: 'seo', label: 'SEO & Visibility', icon: '🔍' },
+            { id: 'migration', label: 'WordPress Migration', icon: '📥' },
           ].map((section) => (
             <button
               key={section.id}
@@ -443,6 +445,10 @@ export function SettingsPanel() {
               </div>
             </div>
           </div>
+        )}
+
+        {activeSection === 'migration' && (
+          <WordPressMigrationSettings />
         )}
 
         {/* Save Button */}
