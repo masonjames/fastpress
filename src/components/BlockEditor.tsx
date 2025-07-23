@@ -136,6 +136,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
           {/* Move buttons */}
           {onMoveUp && (
             <button
+              type="button"
               onClick={onMoveUp}
               disabled={!canMoveUp}
               className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -149,6 +150,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
           
           {onMoveDown && (
             <button
+              type="button"
               onClick={onMoveDown}
               disabled={!canMoveDown}
               className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -162,6 +164,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
 
           {/* Expand/collapse button */}
           <button
+            type="button"
             onClick={() => setIsExpanded(!isExpanded)}
             className="p-1 text-gray-400 hover:text-gray-600"
             title={isExpanded ? 'Collapse' : 'Expand'}
@@ -178,6 +181,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
 
           {/* Delete button */}
           <button
+            type="button"
             onClick={onDelete}
             className="p-1 text-red-400 hover:text-red-600"
             title="Delete block"

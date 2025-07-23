@@ -165,7 +165,7 @@ export function PostView({ postSlug }: PostViewProps) {
         ) : (
           <div 
             className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline"
-            dangerouslySetInnerHTML={{ __html: formatContent(post.content) }}
+            dangerouslySetInnerHTML={{ __html: formatContent(post.content || '') }}
           />
         )}
       </article>
@@ -200,6 +200,11 @@ export function PostView({ postSlug }: PostViewProps) {
 }
 
 function formatContent(content: string): string {
+  // Handle empty or undefined content
+  if (!content || content.trim() === '') {
+    return '<p><em>No content available</em></p>';
+  }
+  
   // Convert markdown-like syntax to HTML
   return content
     .replace(/^# (.*$)/gim, '<h1>$1</h1>')

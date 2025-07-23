@@ -133,6 +133,7 @@ export function PostEditor({ editingPost, onPostSaved, onCancel }: PostEditorPro
         commentsEnabled,
       };
 
+
       if (editingPost) {
         await updatePost({
           id: editingPost._id,

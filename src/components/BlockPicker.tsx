@@ -53,6 +53,7 @@ export const BlockPicker: React.FC<BlockPickerProps> = ({ onBlockSelect, onClose
             <p className="text-sm text-gray-600 mt-1">Choose a block to add to your content</p>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
           >
@@ -79,6 +80,7 @@ export const BlockPicker: React.FC<BlockPickerProps> = ({ onBlockSelect, onClose
               {categories.map((category) => (
                 <button
                   key={category.id}
+                  type="button"
                   onClick={() => setSelectedCategory(category.id)}
                   className={`w-full flex items-center px-3 py-2 text-sm rounded-lg mb-1 transition-colors ${
                     selectedCategory === category.id
@@ -100,6 +102,7 @@ export const BlockPicker: React.FC<BlockPickerProps> = ({ onBlockSelect, onClose
                 {filteredBlocks.map((block) => (
                   <button
                     key={block.id}
+                    type="button"
                     onClick={() => handleBlockSelect(block.id)}
                     className="text-left p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-md transition-all group"
                   >
@@ -134,6 +137,7 @@ export const BlockPicker: React.FC<BlockPickerProps> = ({ onBlockSelect, onClose
             {filteredBlocks.length} block{filteredBlocks.length !== 1 ? 's' : ''} available
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
           >

@@ -20,6 +20,7 @@ export const RenderBlocks: React.FC<{
 }> = (props) => {
   const { blocks, disableContainer } = props
 
+
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
   if (hasBlocks) {
