@@ -1,13 +1,13 @@
 import { ArrowRight } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { CtaBlock } from '@/payload-types';
-import { Icon } from '@/components/Icon';
-import RichText from '@/components/RichText';
-import { splitRichText } from '@/utilities/richtext';
-import { Media } from '@/components/Media';
-import { PublicContextProps } from '@/utilities/publicContextProps';
+import { Button } from '../../components/ui/button';
+import { Card } from '../../components/ui/card';
+import { CtaBlock } ;
+import { Icon } from '../../components/Icon';
+import RichText from '../../components/RichText';
+import { splitRichText } from '../../utilities/richtext';
+import { Media } from '../../components/Media';
+import { PublicContextProps } from '../../utilities/publicContextProps';
 
 const Cta1: React.FC<CtaBlock & { publicContext: PublicContextProps }> = ({ icon, richText, image, publicContext }) => {
   const { firstNode, rest } = splitRichText(richText, {

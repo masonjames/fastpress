@@ -1,6 +1,6 @@
 import RichText from "@/components/RichText";
 import { FeatureBlock } from "@/payload-types";
-import { PublicContextProps } from '@/utilities/publicContextProps';
+import { PublicContextProps } from '../../utilities/publicContextProps';
 
 const Feature99: React.FC<FeatureBlock & { publicContext: PublicContextProps }> = ({ richText, image, links, icon, tagline, USPs, publicContext }) => {
   return (

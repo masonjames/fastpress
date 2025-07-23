@@ -1,8 +1,8 @@
-import { Post } from '@/payload-types'
-import { allPostDesignVersions } from '@/collections/Posts/index'
+import { Post } 
+import { allPostDesignVersions } from '../../collections/Posts/index'
 import { Blog20 } from './blog20'
 import { Blog18 } from './blog18'
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 // Extract just the value property from the design versions for use as keys
 type PostDesignVersionValue = (typeof allPostDesignVersions)[number]['value']

@@ -1,6 +1,6 @@
 import { Play, Zap } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '../../components/ui/button';
 
 const Feature2 = () => {
   return (

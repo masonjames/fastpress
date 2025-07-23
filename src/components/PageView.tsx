@@ -3,6 +3,7 @@ import { api } from "../../convex/_generated/api";
 import { SEOHead } from "./SEOHead";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { LoadingState } from "./LoadingSpinner";
+import { RenderBlocks } from "../blocks/RenderBlocks";
 
 interface PageViewProps {
   pageSlug: string;
@@ -108,12 +109,20 @@ export function PageView({ pageSlug }: PageViewProps) {
             )}
           </header>
 
-          <div 
-            className="prose prose-lg max-w-none"
-            dangerouslySetInnerHTML={{ 
-              __html: page.content?.replace(/\n/g, '<br>') || '' 
-            }}
-          />
+          {/* Render blocks if layout exists, otherwise fall back to content */}
+          {page.layout && page.layout.length > 0 ? (
+            <RenderBlocks 
+              blocks={page.layout} 
+              disableContainer={false}
+            />
+          ) : (
+            <div 
+              className="prose prose-lg max-w-none"
+              dangerouslySetInnerHTML={{ 
+                __html: page.content?.replace(/\n/g, '<br>') || '' 
+              }}
+            />
+          )}
         </article>
 
         {/* Child Pages */}

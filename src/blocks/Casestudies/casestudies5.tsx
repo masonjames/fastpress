@@ -3,16 +3,16 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import React, { useState } from 'react'
 
-import type { CarouselApi } from '@/components/ui/carousel'
+import type { CarouselApi } from '../../components/ui/carousel'
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel'
-import { CasestudiesBlock } from '@/payload-types'
-import { Media } from '@/components/Media'
+} from '../../components/ui/carousel'
+import { CasestudiesBlock } 
+import { Media } from '../../components/Media'
 
 const Casestudies5: React.FC<CasestudiesBlock> = ({
   slides,

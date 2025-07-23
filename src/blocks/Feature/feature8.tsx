@@ -1,9 +1,9 @@
 import { ChevronRight } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
-import { buttonVariants } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { cn } from '@/utilities/cn';
+import { Badge } from '../../components/ui/badge';
+import { buttonVariants } from '../../components/ui/button';
+import { Card } from '../../components/ui/card';
+import { cn } from '../../utilities/cn';
 
 const Feature8 = () => {
   return (

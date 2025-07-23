@@ -3,12 +3,12 @@
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import type { CarouselApi } from '@/components/ui/carousel';
+import type { CarouselApi } from '../../components/ui/carousel';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from '@/components/ui/carousel';
+} from '../../components/ui/carousel';
 
 const features = [
   {

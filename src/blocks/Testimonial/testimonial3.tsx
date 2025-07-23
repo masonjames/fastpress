@@ -1,7 +1,7 @@
-import { Media } from '@/components/Media';
-import RichText from '@/components/RichText';
-import { TestimonialBlock } from '@/payload-types';
-import { PublicContextProps } from '@/utilities/publicContextProps';
+import { Media } from '../../components/Media';
+import RichText from '../../components/RichText';
+import { TestimonialBlock } ;
+import { PublicContextProps } from '../../utilities/publicContextProps';
 
 const Testimonial3: React.FC<TestimonialBlock & { publicContext: PublicContextProps }> = ({ headline, link, tagline, testimonial, publicContext }) => {
   return (

@@ -11,8 +11,8 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '../../components/ui/badge';
+import { Card, CardContent } from '../../components/ui/card';
 import {
   Carousel,
   type CarouselApi,
@@ -20,8 +20,8 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel';
-import { Progress } from '@/components/ui/progress';
+} from '../../components/ui/carousel';
+import { Progress } from '../../components/ui/progress';
 
 const slides = [
   {

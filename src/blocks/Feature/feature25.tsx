@@ -1,9 +1,9 @@
 import { Check } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import RichText from '@/components/RichText'
-import { FeatureBlock } from '@/payload-types'
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import { Badge } from '../../components/ui/badge'
+import { Separator } from '../../components/ui/separator'
+import RichText from '../../components/RichText'
+import { FeatureBlock } 
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 const Feature25: React.FC<FeatureBlock & { tagline?: string, publicContext: PublicContextProps }> = ({ richText, USPs, tagline, publicContext }) => {
   return (

@@ -1,19 +1,19 @@
 'use client'
 
-import { Avatar, AvatarImage } from '@/components/ui/avatar'
-import { Card } from '@/components/ui/card'
+import { Avatar, AvatarImage } from '../../components/ui/avatar'
+import { Card } from '../../components/ui/card'
 import {
     Carousel,
     CarouselContent,
     CarouselItem,
-} from '@/components/ui/carousel'
+} from '../../components/ui/carousel'
 import AutoScroll from 'embla-carousel-auto-scroll'
 import { ChevronRight, Star, Zap } from 'lucide-react'
 import { useRef } from 'react'
-import { TestimonialBlock } from '@/payload-types';
-import RichText from '@/components/RichText';
-import { CMSLink } from '@/components/Link';
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import { TestimonialBlock } ;
+import RichText from '../../components/RichText';
+import { CMSLink } from '../../components/Link';
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 const testimonials = [
     {

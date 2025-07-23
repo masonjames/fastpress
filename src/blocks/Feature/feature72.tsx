@@ -1,8 +1,8 @@
-import { FeatureBlock } from '@/payload-types'
-import RichText from '@/components/RichText'
-import { CMSLink } from '@/components/Link'
-import { Media } from '@/components/Media'
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import { FeatureBlock } 
+import RichText from '../../components/RichText'
+import { CMSLink } from '../../components/Link'
+import { Media } from '../../components/Media'
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 const Feature72: React.FC<FeatureBlock & { publicContext: PublicContextProps }> = ({ richText, links, USPs, publicContext }) => {
   return (

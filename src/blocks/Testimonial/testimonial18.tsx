@@ -1,8 +1,8 @@
-import { Avatar, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarImage } from '../../components/ui/avatar'
 import { Star, Zap } from 'lucide-react'
-import { TestimonialBlock } from '@/payload-types';
-import RichText from '@/components/RichText';
-import { PublicContextProps } from '@/utilities/publicContextProps';
+import { TestimonialBlock } ;
+import RichText from '../../components/RichText';
+import { PublicContextProps } from '../../utilities/publicContextProps';
 
 const Testimonial18: React.FC<TestimonialBlock & { publicContext: PublicContextProps }> = ({ headline, link, tagline, testimonial, publicContext }) => {
     return (

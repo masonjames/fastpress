@@ -1,8 +1,8 @@
-import { CMSLink } from '@/components/Link';
-import { Media } from '@/components/Media';
-import RichText from '@/components/RichText';
-import type { AboutBlock, Media as MediaType } from '@/payload-types';
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import { CMSLink } from '../../components/Link';
+import { Media } from '../../components/Media';
+import RichText from '../../components/RichText';
+import type { AboutBlock, Media as MediaType } ;
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 const About3: React.FC<AboutBlock & { publicContext: PublicContextProps }> = ({ headline, text1, text2, text3, counter, images, link, logos, publicContext }) => {
   return (

@@ -2,17 +2,17 @@
 
 import { useEffect, useState } from 'react';
 
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import type { CarouselApi } from '@/components/ui/carousel';
+import { Avatar, AvatarImage } from '../../components/ui/avatar';
+import type { CarouselApi } from '../../components/ui/carousel';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from '@/components/ui/carousel';
-import { cn } from '@/utilities/cn';
-import { TestimonialBlock } from '@/payload-types';
-import RichText from '@/components/RichText';
-import { PublicContextProps } from '@/utilities/publicContextProps';
+} from '../../components/ui/carousel';
+import { cn } from '../../utilities/cn';
+import { TestimonialBlock } ;
+import RichText from '../../components/RichText';
+import { PublicContextProps } from '../../utilities/publicContextProps';
 
 const Testimonial17: React.FC<TestimonialBlock & { publicContext: PublicContextProps }> = ({ headline, link, tagline, testimonial, publicContext }) => {
   const [api, setApi] = useState<CarouselApi>();

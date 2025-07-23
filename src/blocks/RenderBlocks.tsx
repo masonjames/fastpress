@@ -1,23 +1,6 @@
 import React, { Fragment } from 'react'
 
-import { ArchiveBlock } from './ArchiveBlock/Component'
-import { FeatureBlock } from './Feature/Component'
-import { GalleryBlock } from './Gallery/Component'
-import { CtaBlock } from './Cta/Component'
-import { LogosBlock } from './Logos/Component'
-import { AboutBlock } from './About/Component'
-import { TestimonialBlock } from './Testimonial/Component'
-import { StatBlock } from './Stat/Component'
-import { SplitViewBlock } from './SplitView/Component'
-import { TextBlock } from './TextBlock/Component'
-import { MediaBlock } from './MediaBlock/Component'
-import { ChangelogBlock } from './Changelog/Component'
-import ContactBlock from './Contact/Component'
-import { BlogBlock } from './Blog/Component'
-import { BannerBlock } from './Banner/Component'
-import { CasestudiesBlock } from './Casestudies/Component'
-import { TimelineBlock } from './Timeline/Component'
-import { BlogContentBlock } from './BlogContent/Component'
+import { SimpleTextBlock } from './SimpleTextBlock/Component'
 
 // FastPress block type definition
 interface Block {
@@ -28,24 +11,7 @@ interface Block {
 }
 
 const blockComponents: Partial<Record<string, React.FC<any>>> = {
-  archive: ArchiveBlock,
-  feature: FeatureBlock,
-  gallery: GalleryBlock,
-  cta: CtaBlock,
-  logos: LogosBlock,
-  about: AboutBlock,
-  testimonial: TestimonialBlock,
-  stat: StatBlock,
-  splitView: SplitViewBlock,
-  text: TextBlock,
-  mediaBlock: MediaBlock,
-  changelog: ChangelogBlock,
-  contact: ContactBlock,
-  blog: BlogBlock,
-  banner: BannerBlock,
-  casestudies: CasestudiesBlock,
-  timeline: TimelineBlock,
-  blogContent: BlogContentBlock,
+  text: SimpleTextBlock,
 }
 
 export const RenderBlocks: React.FC<{

@@ -1,12 +1,12 @@
-import { TestimonialBlock } from '@/payload-types';
+import { TestimonialBlock } ;
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel';
-import { Separator } from '@/components/ui/separator';
+} from '../../components/ui/carousel';
+import { Separator } from '../../components/ui/separator';
 
 const Testimonial12: React.FC<TestimonialBlock> = ({ headline, link, tagline, testimonial }) => {
   return (

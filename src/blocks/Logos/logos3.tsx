@@ -10,11 +10,11 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from '@/components/ui/carousel';
-import type { LogosBlock, Media as MediaType } from '@/payload-types';
-import RichText from '@/components/RichText';
-import { Media } from '@/components/Media';
-import { PublicContextProps } from '@/utilities/publicContextProps';
+} from '../../components/ui/carousel';
+import type { LogosBlock, Media as MediaType } ;
+import RichText from '../../components/RichText';
+import { Media } from '../../components/Media';
+import { PublicContextProps } from '../../utilities/publicContextProps';
 
 const Logos3: React.FC<LogosBlock & { publicContext: PublicContextProps }> = ({ richText, logos, publicContext }) => {
   return (

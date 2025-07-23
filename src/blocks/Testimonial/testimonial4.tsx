@@ -1,9 +1,9 @@
-import { Media } from '@/components/Media';
-import RichText from '@/components/RichText';
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { TestimonialBlock } from '@/payload-types';
-import { PublicContextProps } from '@/utilities/publicContextProps';
+import { Media } from '../../components/Media';
+import RichText from '../../components/RichText';
+import { Avatar, AvatarImage } from '../../components/ui/avatar';
+import { Card, CardContent, CardFooter } from '../../components/ui/card';
+import { TestimonialBlock } ;
+import { PublicContextProps } from '../../utilities/publicContextProps';
 
 const Testimonial4: React.FC<TestimonialBlock & { publicContext: PublicContextProps }> = ({ headline, link, tagline, testimonial, publicContext }) => {
   return (

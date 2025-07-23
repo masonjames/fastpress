@@ -1,10 +1,10 @@
-import { Button } from '@/components/ui/button'
-import RichText from '@/components/RichText'
-import { FeatureBlock } from '@/payload-types'
-import { Media } from '@/components/Media'
-import { CMSLink } from '@/components/Link'
-import { Icon } from '@/components/Icon'
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import { Button } from '../../components/ui/button'
+import RichText from '../../components/RichText'
+import { FeatureBlock } 
+import { Media } from '../../components/Media'
+import { CMSLink } from '../../components/Link'
+import { Icon } from '../../components/Icon'
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 const Feature1: React.FC<FeatureBlock & { publicContext: PublicContextProps }> = ({ richText, image, links, icon, publicContext }) => {
   return (

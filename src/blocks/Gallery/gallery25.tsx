@@ -3,8 +3,8 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 
-import { GalleryBlock } from '@/payload-types'
-import { Media } from '@/components/Media'
+import { GalleryBlock } 
+import { Media } from '../../components/Media'
 
 interface GalleryColumnProps {
   images: GalleryBlock['elements']

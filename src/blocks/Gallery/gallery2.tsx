@@ -6,9 +6,9 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+} from '../../components/ui/carousel';
+import { Dialog, DialogContent } from '../../components/ui/dialog';
+import { Button } from '../../components/ui/button';
 import { X } from 'lucide-react';
 
 const images = [

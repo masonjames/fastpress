@@ -2,13 +2,13 @@
 
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import { cn } from '@/utilities/cn';
-import { TestimonialBlock } from '@/payload-types';
-import RichText from '@/components/RichText';
-import { PublicContextProps } from '@/utilities/publicContextProps';
+import { Avatar, AvatarImage } from '../../components/ui/avatar';
+import { Badge } from '../../components/ui/badge';
+import { Card } from '../../components/ui/card';
+import { cn } from '../../utilities/cn';
+import { TestimonialBlock } ;
+import RichText from '../../components/RichText';
+import { PublicContextProps } from '../../utilities/publicContextProps';
 
 const testimonials = [
   {

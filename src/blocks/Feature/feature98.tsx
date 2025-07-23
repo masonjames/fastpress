@@ -1,7 +1,7 @@
 import { ArrowRight } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '../../components/ui/button';
+import { Separator } from '../../components/ui/separator';
 
 const Feature98 = () => {
   return (

@@ -1,8 +1,8 @@
-import RichText from '@/components/RichText';
-import type { LogosBlock, Media as MediaType } from '@/payload-types';
-import { Media } from '@/components/Media';
-import { CMSLink } from '@/components/Link';
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import RichText from '../../components/RichText';
+import type { LogosBlock, Media as MediaType } ;
+import { Media } from '../../components/Media';
+import { CMSLink } from '../../components/Link';
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 const Logos2: React.FC<LogosBlock & { publicContext: PublicContextProps }> = ({ richText, link, logos, publicContext }) => {
   return (

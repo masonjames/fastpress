@@ -8,7 +8,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '../../components/ui/badge';
 
 const Feature104 = () => {
   return (

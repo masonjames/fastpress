@@ -1,8 +1,8 @@
-import { cn } from 'src/utilities/cn'
+import { cn } from '../../utilities/cn'
 import React from 'react'
-import type { SplitViewBlock as SplitViewBlockProps } from '@/payload-types'
+import type { SplitViewBlock as SplitViewBlockProps } 
 import { RenderBlocks } from '../RenderBlocks'
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 type Props = {
   columns: SplitViewBlockProps['columns']

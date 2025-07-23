@@ -1,8 +1,8 @@
-import { FeatureBlock } from '@/payload-types'
-import RichText from '@/components/RichText'
-import { Icon } from '@/components/Icon'
-import { CMSLink } from '@/components/Link'
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import { FeatureBlock } 
+import RichText from '../../components/RichText'
+import { Icon } from '../../components/Icon'
+import { CMSLink } from '../../components/Link'
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 /**
  * Feature 91 has exactly two USPs

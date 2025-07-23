@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '../../components/ui/badge';
 
 const Feature95 = () => {
   return (

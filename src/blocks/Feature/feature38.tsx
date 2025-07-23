@@ -1,7 +1,7 @@
 import { Globe, Hash, NotebookText } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '../../components/ui/button';
+import { Separator } from '../../components/ui/separator';
 
 const Feature38 = () => {
   return (

@@ -1,5 +1,5 @@
-import { TestimonialBlock } from '@/payload-types';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { TestimonialBlock } ;
+import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 
 const Testimonial10: React.FC<TestimonialBlock> = ({ headline, link, tagline, testimonial }) => {
   return (

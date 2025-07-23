@@ -1,7 +1,7 @@
 import React from 'react'
-import { Media } from '@/components/Media'
-import type { Page } from '@/payload-types'
-import { cn } from '@/utilities/cn'
+import { Media } from '../../components/Media'
+import type { Page } 
+import { cn } from '../../utilities/cn'
 
 type Props = Extract<Page['layout'][0], { blockType: 'mediaBlock' }> & { disableContainer?: boolean; captionClassName?: string; enableGutter?: boolean }
 

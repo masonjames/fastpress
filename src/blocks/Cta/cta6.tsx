@@ -1,7 +1,7 @@
-import { CMSLink } from '@/components/Link';
-import RichText from '@/components/RichText';
-import { CtaBlock } from '@/payload-types';
-import { PublicContextProps } from '@/utilities/publicContextProps';
+import { CMSLink } from '../../components/Link';
+import RichText from '../../components/RichText';
+import { CtaBlock } ;
+import { PublicContextProps } from '../../utilities/publicContextProps';
 
 const CTA6 : React.FC<CtaBlock & { publicContext: PublicContextProps }> = ({ richText, links, publicContext }) => {
   return (

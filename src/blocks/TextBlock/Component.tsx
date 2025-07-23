@@ -1,10 +1,9 @@
 import React from 'react'
-import RichText from '@/components/RichText'
-import { CMSLink } from '@/components/Link'
-import type { TextBlock as TextBlockProps } from '@/payload-types'
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import RichText from '../../components/RichText'
+import { CMSLink } from '../../components/Link'
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
-export const TextBlock: React.FC<TextBlockProps & { publicContext: PublicContextProps, disableContainer?: boolean }> = (props) => {
+export const TextBlock: React.FC<any> = (props) => {
   const { content, links, publicContext, disableContainer } = props
 
   return (

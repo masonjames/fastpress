@@ -1,12 +1,12 @@
 import { Zap } from 'lucide-react'
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Changelogblock } from '@/payload-types'
-import RichText from '@/components/RichText'
-import { PublicContextProps } from '@/utilities/publicContextProps'
-import { Media } from '@/components/Media'
+import { Badge } from '../../components/ui/badge'
+import { Button } from '../../components/ui/button'
+import { Input } from '../../components/ui/input'
+import { Changelogblock } 
+import RichText from '../../components/RichText'
+import { PublicContextProps } from '../../utilities/publicContextProps'
+import { Media } from '../../components/Media'
 
 const Changelog1: React.FC<Changelogblock & { publicContext: PublicContextProps }> = ({
   richText,

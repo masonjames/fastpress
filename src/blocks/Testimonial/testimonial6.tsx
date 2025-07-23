@@ -1,14 +1,14 @@
-import { TestimonialBlock } from '@/payload-types';
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { TestimonialBlock } ;
+import { Avatar, AvatarImage } from '../../components/ui/avatar';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel';
-import RichText from '@/components/RichText';
-import { PublicContextProps } from '@/utilities/publicContextProps';
+} from '../../components/ui/carousel';
+import RichText from '../../components/RichText';
+import { PublicContextProps } from '../../utilities/publicContextProps';
 
 const testimonials = [
   {

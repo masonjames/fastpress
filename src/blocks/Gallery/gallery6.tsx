@@ -3,16 +3,16 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 
-import { Button } from '@/components/ui/button'
-import type { CarouselApi } from '@/components/ui/carousel'
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
-import { GalleryBlock } from '@/payload-types'
-import RichText from '@/components/RichText'
-import { CMSLink } from '@/components/Link'
-import { Media } from '@/components/Media'
-import { splitRichText } from '@/utilities/richtext'
+import { Button } from '../../components/ui/button'
+import type { CarouselApi } from '../../components/ui/carousel'
+import { Carousel, CarouselContent, CarouselItem } from '../../components/ui/carousel'
+import { GalleryBlock } 
+import RichText from '../../components/RichText'
+import { CMSLink } from '../../components/Link'
+import { Media } from '../../components/Media'
+import { splitRichText } from '../../utilities/richtext'
 
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 const Gallery6: React.FC<GalleryBlock & { publicContext: PublicContextProps }> = ({ richText, tagline, link, elements, publicContext }) => {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>()

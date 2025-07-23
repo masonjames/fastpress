@@ -1,7 +1,7 @@
-import { icon } from '@/components/Icon/config'
-import { linkGroup } from '@/fields/linkGroup'
-import { link } from '@/fields/link'
-import { createBlockItemCondition } from '@/utilities/findParentFeatureVersion'
+import { icon } from '../../components/Icon/config'
+import { linkGroup } from '../../fields/linkGroup'
+import { link } from '../../fields/link'
+import { createBlockItemCondition } from '../../utilities/findParentFeatureVersion'
 
 import {
   FixedToolbarFeature,
@@ -13,9 +13,9 @@ import {
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
 import { Block } from 'payload'
-import { designVersionDescription } from '@/components/AdminDashboard/DesignVersionDescription'
-import { designVersionPreview } from '@/components/AdminDashboard/DesignVersionPreview/config'
-import { backgroundColor } from '@/fields/color'
+import { designVersionDescription } from '../../components/AdminDashboard/DesignVersionDescription'
+import { designVersionPreview } from '../../components/AdminDashboard/DesignVersionPreview/config'
+import { backgroundColor } from '../../fields/color'
 
 export const allFeatureDesignVersions = [
   { label: 'FEATURE1', value: 'FEATURE1', image: '/admin/previews/feature/feature1.jpeg' },

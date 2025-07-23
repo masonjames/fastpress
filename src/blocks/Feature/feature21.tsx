@@ -1,8 +1,8 @@
 import { Sparkles, SquareDashedMousePointer } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { Badge } from '../../components/ui/badge';
+import { Card } from '../../components/ui/card';
+import { Separator } from '../../components/ui/separator';
 
 const Feature21 = () => {
   return (

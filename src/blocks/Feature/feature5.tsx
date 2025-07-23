@@ -1,7 +1,7 @@
 import { AppWindowMac, Zap } from 'lucide-react';
 
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Card } from '@/components/ui/card';
+import { Avatar, AvatarImage } from '../../components/ui/avatar';
+import { Card } from '../../components/ui/card';
 
 const Feature5 = () => {
   return (

@@ -1,10 +1,10 @@
-import { BannerBlock } from '@/blocks/LexicalBlocks/Banner/Component'
-import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
-import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { BannerBlock } from '../../blocks/LexicalBlocks/Banner/Component'
+import { CodeBlock, CodeBlockProps } from '../../blocks/Code/Component'
+import { MediaBlock } from '../../blocks/MediaBlock/Component'
 import React, { Fragment, JSX } from 'react'
-import { CMSLink } from '@/components/Link'
+import { CMSLink } from '../../components/Link'
 import { DefaultNodeTypes, SerializedBlockNode } from '@payloadcms/richtext-lexical'
-import type { BannerBlock as BannerBlockProps, Media as MediaType } from '@/payload-types'
+import type { BannerBlock as BannerBlockProps, Media as MediaType } from '../../payload-types'
 import Image from 'next/image'
 
 import {
@@ -16,10 +16,10 @@ import {
   IS_SUPERSCRIPT,
   IS_UNDERLINE,
 } from './nodeFormat'
-import type { Page } from '@/payload-types'
-import { cn } from '@/utilities/cn'
-import { PublicContextProps } from '@/utilities/publicContextProps'
-import { getHeadlineId } from '@/utilities/richtext'
+import type { Page } from '../../payload-types'
+import { cn } from '../../utilities/cn'
+import { PublicContextProps } from '../../utilities/publicContextProps'
+import { getHeadlineId } from '../../utilities/richtext'
 
 export type NodeTypes =
   | DefaultNodeTypes

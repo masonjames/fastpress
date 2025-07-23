@@ -3,18 +3,18 @@
 import AutoScroll from 'embla-carousel-auto-scroll';
 import { useRef } from 'react';
 
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Avatar, AvatarImage } from '../../components/ui/avatar';
+import { Button } from '../../components/ui/button';
+import { Card } from '../../components/ui/card';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from '@/components/ui/carousel';
-import { TestimonialBlock } from '@/payload-types';
-import RichText from '@/components/RichText';
-import { CMSLink } from '@/components/Link';
-import { PublicContextProps } from '@/utilities/publicContextProps';
+} from '../../components/ui/carousel';
+import { TestimonialBlock } ;
+import RichText from '../../components/RichText';
+import { CMSLink } from '../../components/Link';
+import { PublicContextProps } from '../../utilities/publicContextProps';
 
 
 const testimonials1 = [

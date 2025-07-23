@@ -1,5 +1,5 @@
-import Logos2 from '@/blocks/Logos/logos2'
-import Logos3 from '@/blocks/Logos/logos3'
+import Logos2 from '../../blocks/Logos/logos2'
+import Logos3 from '../../blocks/Logos/logos3'
 
 import { LogosDesignVersion } from './config'
 

@@ -1,10 +1,10 @@
-import { TestimonialBlock } from '@/payload-types';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Stars } from '@/components/uiCustom/stars';
-import { Media } from '@/components/Media';
-import RichText from '@/components/RichText';
-import { CMSLink } from '@/components/Link';
-import { PublicContextProps } from '@/utilities/publicContextProps';
+import { TestimonialBlock } ;
+import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
+import { Stars } from '../../components/uiCustom/stars';
+import { Media } from '../../components/Media';
+import RichText from '../../components/RichText';
+import { CMSLink } from '../../components/Link';
+import { PublicContextProps } from '../../utilities/publicContextProps';
 
 const Testimonial11: React.FC<TestimonialBlock & { publicContext: PublicContextProps }> = ({ headline, link, tagline, testimonial, publicContext }) => {
   return (

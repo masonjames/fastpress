@@ -3,22 +3,22 @@
 import { Globe } from 'lucide-react';
 import Masonry from 'react-responsive-masonry';
 
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Avatar, AvatarImage } from '../../components/ui/avatar';
+import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardFooter } from '../../components/ui/card';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel';
-import { cn } from '@/utilities/cn';
-import RichText from '@/components/RichText';
-import { TestimonialBlock } from '@/payload-types';
-import { CMSLink } from '@/components/Link';
-import { PublicContextProps } from '@/utilities/publicContextProps';
+} from '../../components/ui/carousel';
+import { cn } from '../../utilities/cn';
+import RichText from '../../components/RichText';
+import { TestimonialBlock } ;
+import { CMSLink } from '../../components/Link';
+import { PublicContextProps } from '../../utilities/publicContextProps';
 
 const testimonials = [
   {

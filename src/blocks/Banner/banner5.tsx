@@ -3,11 +3,11 @@
 import { X } from 'lucide-react'
 import { useState } from 'react'
 
-import { Button } from '@/components/ui/button'
-import { PublicContextProps } from '@/utilities/publicContextProps'
-import { BannerBlockV2 } from '@/payload-types'
-import { Icon } from '@/components/Icon'
-import { CMSLink } from '@/components/Link'
+import { Button } from '../../components/ui/button'
+import { PublicContextProps } from '../../utilities/publicContextProps'
+import { BannerBlockV2 } 
+import { Icon } from '../../components/Icon'
+import { CMSLink } from '../../components/Link'
 
 const Banner5: React.FC<BannerBlockV2 & { publicContext: PublicContextProps }> = ({
   position,

@@ -1,17 +1,17 @@
 import { Check } from 'lucide-react';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { ContactBlock } from '@/payload-types';
-import RichText from '@/components/RichText';
+} from '../../components/ui/select';
+import { ContactBlock } ;
+import RichText from '../../components/RichText';
 import { FormBlock, FormBlockType } from '../Form/Component';
 
 const Contact1: React.FC<ContactBlock> = ({ richText, form, contactBlocks, maps }) => {

@@ -3,14 +3,14 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import type { CarouselApi } from '@/components/ui/carousel';
+import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
+import type { CarouselApi } from '../../components/ui/carousel';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from '@/components/ui/carousel';
+} from '../../components/ui/carousel';
 
 const data = [
   {

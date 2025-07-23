@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
-import { cn } from '@/utilities/cn';
-import { TestimonialBlock } from '@/payload-types';
-import RichText from '@/components/RichText';
-import { PublicContextProps } from '@/utilities/publicContextProps';
+import { Avatar, AvatarImage } from '../../components/ui/avatar';
+import { Separator } from '../../components/ui/separator';
+import { cn } from '../../utilities/cn';
+import { TestimonialBlock } ;
+import RichText from '../../components/RichText';
+import { PublicContextProps } from '../../utilities/publicContextProps';
 
 const tweets = [
   {

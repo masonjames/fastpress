@@ -4,6 +4,7 @@ import { SEOHead } from "./SEOHead";
 import { RelatedPosts } from "./RelatedPosts";
 import { CommentList } from "./CommentList";
 import { useNavigate } from "react-router-dom";
+import { RenderBlocks } from "../blocks/RenderBlocks";
 
 interface PostViewProps {
   postSlug: string;
@@ -155,10 +156,18 @@ export function PostView({ postSlug }: PostViewProps) {
         </header>
 
         {/* Article Content */}
-        <div 
-          className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline"
-          dangerouslySetInnerHTML={{ __html: formatContent(post.content) }}
-        />
+        {/* Render blocks if layout exists, otherwise fall back to content */}
+        {post.layout && post.layout.length > 0 ? (
+          <RenderBlocks 
+            blocks={post.layout} 
+            disableContainer={false}
+          />
+        ) : (
+          <div 
+            className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline"
+            dangerouslySetInnerHTML={{ __html: formatContent(post.content) }}
+          />
+        )}
       </article>
 
       {/* Comments Section */}

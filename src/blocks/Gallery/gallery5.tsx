@@ -3,14 +3,14 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-import { Button } from '@/components/ui/button'
-import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '@/components/ui/carousel'
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { GalleryBlock } from '@/payload-types'
-import { Media } from '@/components/Media'
-import RichText from '@/components/RichText'
-import { PublicContextProps } from '@/utilities/publicContextProps'
-import { Icon } from '@/components/Icon'
+import { Button } from '../../components/ui/button'
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '../../components/ui/carousel'
+import { ToggleGroup, ToggleGroupItem } from '../../components/ui/toggle-group'
+import { GalleryBlock } 
+import { Media } from '../../components/Media'
+import RichText from '../../components/RichText'
+import { PublicContextProps } from '../../utilities/publicContextProps'
+import { Icon } from '../../components/Icon'
 
 // Default icons to use as fallbacks if no icon is specified
 const defaultIcons = ['CheckSquare', 'Clock', 'Users', 'Target', 'Focus']

@@ -1,14 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Icon } from '@/components/Icon'
-import { Badge } from '@/components/ui/badge'
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
-import type { CarouselApi } from '@/components/ui/carousel'
-import { PublicContextProps } from '@/utilities/publicContextProps'
-import { FeatureBlock } from '@/payload-types'
-import RichText from '@/components/RichText'
-import { Media } from '@/components/Media'
+import { Icon } from '../../components/Icon'
+import { Badge } from '../../components/ui/badge'
+import { Carousel, CarouselContent, CarouselItem } from '../../components/ui/carousel'
+import type { CarouselApi } from '../../components/ui/carousel'
+import { PublicContextProps } from '../../utilities/publicContextProps'
+import { FeatureBlock } 
+import RichText from '../../components/RichText'
+import { Media } from '../../components/Media'
 
 const Feature57: React.FC<FeatureBlock & { publicContext: PublicContextProps }> = ({
   richText,

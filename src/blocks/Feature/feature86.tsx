@@ -1,7 +1,7 @@
 import { Play } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import { Badge } from '../../components/ui/badge';
+import { Separator } from '../../components/ui/separator';
 
 const Feature86 = () => {
   return (

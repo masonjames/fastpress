@@ -1,7 +1,7 @@
 import { ChevronRight, SquareDashedMousePointer } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { Card } from '../../components/ui/card';
+import { Separator } from '../../components/ui/separator';
 
 const utilities = [
   {

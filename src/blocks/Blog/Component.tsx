@@ -4,8 +4,8 @@ import { getPayload } from 'payload'
 
 import { allBlogDesignVersions } from './config'
 import { Blog29 } from './blog29'
-import { Post, Category } from '@/payload-types'
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import { Post, Category } 
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 // Extract just the value property from the design versions for use as keys
 type BlogDesignVersionValue = (typeof allBlogDesignVersions)[number]['value']

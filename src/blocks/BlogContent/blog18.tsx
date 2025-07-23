@@ -13,10 +13,10 @@ import {
   Twitter,
 } from 'lucide-react'
 
-import { cn } from '@/utilities'
-import { DateFormatter } from '@/components/DateFormatter'
-import RichText from '@/components/RichText'
-import { Avatar, AvatarImage } from '@/components/ui/avatar'
+import { cn } from '../../utilities'
+import { DateFormatter } from '../../components/DateFormatter'
+import RichText from '../../components/RichText'
+import { Avatar, AvatarImage } from '../../components/ui/avatar'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -24,13 +24,13 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
-import { Post } from '@/payload-types'
-import { PublicContextProps } from '@/utilities/publicContextProps'
-import { getAuthorObject } from '@/utilities/authorUtils'
-import { getSideMenuStructure } from '@/utilities/richtext'
+} from '../../components/ui/breadcrumb'
+import { Button } from '../../components/ui/button'
+import { Separator } from '../../components/ui/separator'
+import { Post } 
+import { PublicContextProps } from '../../utilities/publicContextProps'
+import { getAuthorObject } from '../../utilities/authorUtils'
+import { getSideMenuStructure } from '../../utilities/richtext'
 
 const Blog18: React.FC<Post & { publicContext: PublicContextProps }> = (props) => {
   const [activeSection, setActiveSection] = useState<string | null>(null)

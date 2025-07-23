@@ -1,6 +1,6 @@
 import { ChevronRight, LayoutTemplate } from 'lucide-react';
 
-import { Separator } from '@/components/ui/separator';
+import { Separator } from '../../components/ui/separator';
 
 const Feature24 = () => {
   return (

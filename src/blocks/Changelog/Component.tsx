@@ -1,7 +1,7 @@
 import React from 'react'
-import type { Page } from '@/payload-types'
+import type { Page } 
 import { Changelog1 } from './changelog1'
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 const changelogs = {
   CHANGELOG1: Changelog1,

@@ -1,6 +1,6 @@
 import { ArrowUp } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Card } from '../../components/ui/card';
 
 const Stat2 = () => {
   return (

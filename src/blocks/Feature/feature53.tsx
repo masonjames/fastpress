@@ -1,5 +1,5 @@
-import { Media } from '@/components/Media'
-import { FeatureBlock } from '@/payload-types'
+import { Media } from '../../components/Media'
+import { FeatureBlock } 
 
 /**
  * A grid of USPs with images and titles

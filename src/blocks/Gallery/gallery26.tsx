@@ -2,8 +2,8 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { GalleryBlock } from '@/payload-types'
-import { Media } from '@/components/Media'
+import { GalleryBlock } 
+import { Media } from '../../components/Media'
 
 const gridClasses = [
   'col-span-2 h-82 hover:rounded-[2.5rem]',

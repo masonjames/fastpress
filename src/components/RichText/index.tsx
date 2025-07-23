@@ -18,11 +18,11 @@
  * />
  */
 
-import { cn } from '@/utilities/cn'
+import { cn } from '../../utilities/cn'
 import React from 'react'
 
 import { OverrideStyle, serializeLexical } from './serialize'
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 type BaseRichTextProps = {
   /** Raw content object from Lexical editor */

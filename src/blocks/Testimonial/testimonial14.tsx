@@ -3,15 +3,15 @@
 import { Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import type { CarouselApi } from '@/components/ui/carousel';
+import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
+import { Button } from '../../components/ui/button';
+import type { CarouselApi } from '../../components/ui/carousel';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from '@/components/ui/carousel';
-import { TestimonialBlock } from '@/payload-types';
+} from '../../components/ui/carousel';
+import { TestimonialBlock } ;
 
 const testimonials = [
   {

@@ -2,9 +2,9 @@
 
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Card } from '@/components/ui/card';
-import { TestimonialBlock } from '@/payload-types';
+import { Avatar, AvatarImage } from '../../components/ui/avatar';
+import { Card } from '../../components/ui/card';
+import { TestimonialBlock } ;
 
 const testimonials = [
   {

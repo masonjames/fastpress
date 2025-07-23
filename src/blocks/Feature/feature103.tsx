@@ -1,9 +1,9 @@
 import { ArrowRight } from 'lucide-react'
 
-import { Badge } from '@/components/ui/badge'
-import { FeatureBlock } from '@/payload-types'
-import RichText from '@/components/RichText'
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import { Badge } from '../../components/ui/badge'
+import { FeatureBlock } 
+import RichText from '../../components/RichText'
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 /**
  * https://www.shadcnblocks.com/block/feature103/

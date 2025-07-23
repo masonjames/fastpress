@@ -1,5 +1,5 @@
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
+import { Badge } from '../../components/ui/badge';
+import { Card } from '../../components/ui/card';
 
 const Feature36 = () => {
   return (

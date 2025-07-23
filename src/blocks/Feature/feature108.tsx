@@ -1,8 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
 import { CreditCard, Layout, Menu, Pointer, Zap } from 'lucide-react'
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Badge } from '../../components/ui/badge'
+import { Button } from '../../components/ui/button'
 
 const Feature108 = () => {
   return (

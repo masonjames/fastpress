@@ -1,10 +1,10 @@
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { TestimonialBlock } from '@/payload-types';
-import { Media } from '@/components/Media';
-import { splitRichText } from '@/utilities/richtext';
-import RichText from '@/components/RichText';
-import { CMSLink } from '@/components/Link';
-import { PublicContextProps } from '@/utilities/publicContextProps';
+import { Avatar, AvatarImage } from '../../components/ui/avatar';
+import { TestimonialBlock } ;
+import { Media } from '../../components/Media';
+import { splitRichText } from '../../utilities/richtext';
+import RichText from '../../components/RichText';
+import { CMSLink } from '../../components/Link';
+import { PublicContextProps } from '../../utilities/publicContextProps';
 
 const Testimonial2: React.FC<TestimonialBlock & { publicContext: PublicContextProps }> = ({ headline, link, tagline, testimonial, publicContext }) => {
   const { firstNode, rest } = splitRichText(headline, {

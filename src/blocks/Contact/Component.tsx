@@ -1,8 +1,8 @@
 import { ContactDesignVersion } from './config'
-import Contact1 from '@/blocks/Contact/contact1'
-import Contact3 from '@/blocks/Contact/contact3'
-import Contact2 from '@/blocks/Contact/contact2'
-import Contact4 from '@/blocks/Contact/contact4'
+import Contact1 from '../../blocks/Contact/contact1'
+import Contact3 from '../../blocks/Contact/contact3'
+import Contact2 from '../../blocks/Contact/contact2'
+import Contact4 from '../../blocks/Contact/contact4'
 
 // Enforce required contacts but allow additional ones
 type Contact<T extends string = string> = Required<Record<ContactDesignVersion, React.FC<any>>> & Record<T, React.FC<any>>;

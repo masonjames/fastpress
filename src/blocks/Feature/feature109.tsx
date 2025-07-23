@@ -1,8 +1,8 @@
 import { ChevronRight, Menu } from 'lucide-react';
 
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage } from '../../components/ui/avatar';
+import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
 
 const Feature109 = () => {
   return (

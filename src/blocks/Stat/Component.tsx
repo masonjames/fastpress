@@ -1,11 +1,11 @@
 import { StatDesignVersion } from './config'
-import Stat1 from '@/blocks/Stat/stat1'
-import Stat2 from '@/blocks/Stat/stat2'
-import Stat4 from '@/blocks/Stat/stat4'
-import Stat5 from '@/blocks/Stat/stat5'
-import Stat6 from '@/blocks/Stat/stat6'
-import Stat7 from '@/blocks/Stat/stat7'
-import Stat8 from '@/blocks/Stat/stat8'
+import Stat1 from '../../blocks/Stat/stat1'
+import Stat2 from '../../blocks/Stat/stat2'
+import Stat4 from '../../blocks/Stat/stat4'
+import Stat5 from '../../blocks/Stat/stat5'
+import Stat6 from '../../blocks/Stat/stat6'
+import Stat7 from '../../blocks/Stat/stat7'
+import Stat8 from '../../blocks/Stat/stat8'
 
 type Stat<T extends string = string> = Required<Record<StatDesignVersion, React.FC<any>>> & Record<T, React.FC<any>>;
 

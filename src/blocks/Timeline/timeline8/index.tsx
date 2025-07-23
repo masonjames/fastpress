@@ -1,11 +1,11 @@
 import * as React from 'react'
 
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import { PublicContextProps } from '@/utilities/publicContextProps'
-import { TimelineBlock } from '@/payload-types'
-import RichText from '@/components/RichText'
+import { Badge } from '../../components/ui/badge'
+import { Card, CardContent } from '../../components/ui/card'
+import { Separator } from '../../components/ui/separator'
+import { PublicContextProps } from '../../utilities/publicContextProps'
+import { TimelineBlock } 
+import RichText from '../../components/RichText'
 import styles from './index.module.css'
 
 const Timeline8: React.FC<TimelineBlock & { publicContext: PublicContextProps }> = ({

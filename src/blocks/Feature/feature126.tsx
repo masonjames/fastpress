@@ -1,18 +1,18 @@
 'use client'
 
-import { CMSLink } from '@/components/Link'
-import { Media } from '@/components/Media'
-import RichText from '@/components/RichText'
+import { CMSLink } from '../../components/Link'
+import { Media } from '../../components/Media'
+import RichText from '../../components/RichText'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion'
-import { Badge } from '@/components/ui/badge'
-import type { FeatureBlock, Media as MediaType } from '@/payload-types'
-import { PublicContextProps } from '@/utilities/publicContextProps'
-import { splitRichText } from '@/utilities/richtext'
+} from '../../components/ui/accordion'
+import { Badge } from '../../components/ui/badge'
+import type { FeatureBlock, Media as MediaType } 
+import { PublicContextProps } from '../../utilities/publicContextProps'
+import { splitRichText } from '../../utilities/richtext'
 import { useState } from 'react'
 
 const Feature126: React.FC<FeatureBlock & { publicContext: PublicContextProps }> = ({

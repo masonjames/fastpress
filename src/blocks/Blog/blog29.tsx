@@ -1,16 +1,16 @@
 import { ArrowUpRightIcon } from 'lucide-react'
 import React from 'react'
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import { BlogBlock, Post, Category } from '@/payload-types'
-import { PublicContextProps } from '@/utilities/publicContextProps'
-import RichText from '@/components/RichText'
+import { Badge } from '../../components/ui/badge'
+import { Button } from '../../components/ui/button'
+import { Card, CardContent } from '../../components/ui/card'
+import { Separator } from '../../components/ui/separator'
+import { BlogBlock, Post, Category } 
+import { PublicContextProps } from '../../utilities/publicContextProps'
+import RichText from '../../components/RichText'
 import Link from 'next/link'
-import { CMSLink } from '@/components/Link'
-import { extractPlainText } from '@/utilities/richtext'
+import { CMSLink } from '../../components/Link'
+import { extractPlainText } from '../../utilities/richtext'
 
 // Extended props interface to include posts array
 interface Blog29Props extends BlogBlock {

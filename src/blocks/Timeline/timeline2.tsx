@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { cn } from '@/utilities/cn'
-import { PublicContextProps } from '@/utilities/publicContextProps'
-import { TimelineBlock } from '@/payload-types'
-import { Media } from '@/components/Media'
-import RichText from '@/components/RichText'
+import { cn } from '../../utilities/cn'
+import { PublicContextProps } from '../../utilities/publicContextProps'
+import { TimelineBlock } 
+import { Media } from '../../components/Media'
+import RichText from '../../components/RichText'
 
 const Timeline2: React.FC<TimelineBlock & { publicContext: PublicContextProps }> = ({
   heading,

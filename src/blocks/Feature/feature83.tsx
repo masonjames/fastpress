@@ -1,6 +1,6 @@
 import { HandHelping, Users } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '../../components/ui/badge';
 
 const Feature83 = () => {
   return (

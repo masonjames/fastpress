@@ -1,6 +1,6 @@
 import RichText from "@/components/RichText";
 import { StatBlock } from "@/payload-types";
-import { PublicContextProps } from '@/utilities/publicContextProps';
+import { PublicContextProps } from '../../utilities/publicContextProps';
 
 const Stat1: React.FC<StatBlock & { publicContext: PublicContextProps }> = ({ headline, stats, publicContext }) => {
   return (

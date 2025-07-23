@@ -1,6 +1,6 @@
 import { Lightbulb, ListChecks, MessageCircleMore } from 'lucide-react';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 
 const Feature51 = () => {
   return (

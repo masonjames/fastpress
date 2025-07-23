@@ -1,7 +1,7 @@
-import RichText from '@/components/RichText'
-import { ContactBlock } from '@/payload-types'
-import { PublicContextProps } from '@/utilities/publicContextProps'
-import { RenderBlocks } from '@/blocks/RenderBlocks'
+import RichText from '../../components/RichText'
+import { ContactBlock } 
+import { PublicContextProps } from '../../utilities/publicContextProps'
+import { RenderBlocks } from '../../blocks/RenderBlocks'
 
 const Contact2: React.FC<ContactBlock & { publicContext: PublicContextProps }> = ({
   richText,

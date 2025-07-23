@@ -5,7 +5,7 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-} from '@/components/ui/card';
+} from '../../components/ui/card';
 
 const Feature4 = () => {
   return (

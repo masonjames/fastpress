@@ -3,19 +3,19 @@
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import type { CarouselApi } from '@/components/ui/carousel';
+import type { CarouselApi } from '../../components/ui/carousel';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from '@/components/ui/carousel';
-import { FeatureBlock } from '@/payload-types';
-import RichText from '@/components/RichText';
-import { splitRichText } from '@/utilities/richtext';
-import { CMSLink } from '@/components/Link';
-import { Media } from '@/components/Media';
+} from '../../components/ui/carousel';
+import { FeatureBlock } ;
+import RichText from '../../components/RichText';
+import { splitRichText } from '../../utilities/richtext';
+import { CMSLink } from '../../components/Link';
+import { Media } from '../../components/Media';
 
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 const Feature70: React.FC<FeatureBlock & { publicContext: PublicContextProps }> = ({ USPs, richText, publicContext }) => {
   const [selection, setSelection] = useState(0);

@@ -1,10 +1,10 @@
 import { BarChart, Heart, Monitor, Plus, TrendingUp } from 'lucide-react';
 
-import { FeatureBlock } from '@/payload-types';
-import RichText from '@/components/RichText';
-import { CMSLink } from '@/components/Link';
-import { Icon } from '@/components/Icon'
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import { FeatureBlock } ;
+import RichText from '../../components/RichText';
+import { CMSLink } from '../../components/Link';
+import { Icon } from '../../components/Icon'
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 const Feature97: React.FC<FeatureBlock & { publicContext: PublicContextProps }> = ({ richText, image, links, icon, tagline, USPs, publicContext }) => {
   return (

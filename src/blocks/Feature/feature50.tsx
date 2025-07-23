@@ -1,11 +1,11 @@
 import { ChevronRight } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
-import { FeatureBlock } from '@/payload-types'
-import RichText from '@/components/RichText'
-import { CMSLink } from '@/components/Link'
-import { Media } from '@/components/Media'
-import { PublicContextProps } from '@/utilities/publicContextProps'
+import { Button } from '../../components/ui/button'
+import { FeatureBlock } 
+import RichText from '../../components/RichText'
+import { CMSLink } from '../../components/Link'
+import { Media } from '../../components/Media'
+import { PublicContextProps } from '../../utilities/publicContextProps'
 
 /**
  * A repeating pattern of three feature cards
